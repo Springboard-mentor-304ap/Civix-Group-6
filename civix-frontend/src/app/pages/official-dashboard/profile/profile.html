@@ -1,0 +1,105 @@
+<div class="profile-header">
+  <h2>Official Profile</h2>
+  <p>View and manage your account details, department designation, and municipal jurisdiction settings.</p>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<div class="profile-card">
+  <form (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-grid">
+      <!-- READ-ONLY FIELDS -->
+      <div class="form-group disabled">
+        <label for="email">Government Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          [value]="email" 
+          disabled>
+        <span class="field-help">Your registered official email cannot be changed.</span>
+      </div>
+
+      <div class="form-group disabled">
+        <label for="role">Account Role</label>
+        <input 
+          id="role" 
+          type="text" 
+          [value]="role" 
+          disabled>
+        <span class="field-help">Your role determines administrative permissions.</span>
+      </div>
+
+      <!-- EDITABLE FIELDS -->
+      <div class="form-group">
+        <label for="name">Full Name <span class="required">*</span></label>
+        <input 
+          id="name" 
+          type="text" 
+          [(ngModel)]="name" 
+          name="name" 
+          placeholder="Enter your name" 
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department / Designation <span class="required">*</span></label>
+        <input 
+          id="department" 
+          type="text" 
+          [(ngModel)]="department" 
+          name="department" 
+          placeholder="e.g. Municipal Board Director"
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Jurisdiction Area / Ward</label>
+        <input 
+          id="location" 
+          type="text" 
+          [(ngModel)]="location" 
+          name="location" 
+          placeholder="e.g. Ward 12, Municipal Zone 4">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="city">City <span class="required">*</span></label>
+          <input 
+            id="city" 
+            type="text" 
+            [(ngModel)]="city" 
+            name="city" 
+            placeholder="e.g. Delhi" 
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="state">State <span class="required">*</span></label>
+          <input 
+            id="state" 
+            type="text" 
+            [(ngModel)]="state" 
+            name="state" 
+            placeholder="e.g. Delhi" 
+            required>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="save-btn" 
+        [disabled]="loading">
+        {{ loading ? 'Saving...' : 'Save Changes' }}
+      </button>
+    </div>
+  </form>
+</div>

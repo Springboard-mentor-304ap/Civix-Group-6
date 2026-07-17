@@ -1,0 +1,43 @@
+<div class="dashboard-container">
+  <!-- Sidebar / Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="seal">
+        <span>C</span>
+      </div>
+      <div>
+        <h2>CIVIX</h2>
+        <small>Digital Civic Engagement</small>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <a routerLink="/citizen-dashboard" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active" class="nav-item">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a routerLink="/citizen-dashboard/petitions" routerLinkActive="active" class="nav-item">
+        <span class="icon">📜</span> Petitions
+      </a>
+      <a routerLink="/citizen-dashboard/polls" routerLinkActive="active" class="nav-item">
+        <span class="icon">🗳️</span> Polls
+      </a>
+      <a routerLink="/citizen-dashboard/officials" routerLinkActive="active" class="nav-item">
+        <span class="icon">🏛️</span> Officials
+      </a>
+      <a routerLink="/citizen-dashboard/profile" routerLinkActive="active" class="nav-item">
+        <span class="icon">👤</span> Profile
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="onLogout()">
+        <span class="icon">🚪</span> Log Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

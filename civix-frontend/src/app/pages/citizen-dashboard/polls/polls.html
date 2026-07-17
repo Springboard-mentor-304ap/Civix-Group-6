@@ -1,0 +1,129 @@
+<div class="polls-header">
+  <h2>Civic Polls</h2>
+  <p>Cast your digital ballot on crucial town issues and see instant verifiable results.</p>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Syncing municipal ballots...</p>
+</div>
+
+<ng-template #content>
+  <!-- ACTIVE POLLS SECTION -->
+  <div class="section-title">
+    <h3>Active Polls</h3>
+    <span class="active-count">{{ activePolls.length }} Live</span>
+  </div>
+  
+  <div class="polls-grid" *ngIf="activePolls.length > 0; else noActive">
+    <div class="poll-card" *ngFor="let poll of activePolls">
+      <div class="poll-top">
+        <span class="badge live">🗳️ Live</span>
+        <span class="date-range">Ends {{ poll.endDate | date:'mediumDate' }}</span>
+      </div>
+  
+      <h4>{{ poll.title }}</h4>
+      <p class="description">{{ poll.description }}</p>
+  
+      <!-- Post-Vote Results Mode -->
+      <div class="results-container" *ngIf="poll.userVoted; else voteMode">
+        <div class="voted-banner">
+          <span>✓</span> You voted: <strong>{{ poll.selectedOption }}</strong>
+        </div>
+  
+        <div class="option-bar-wrapper" *ngFor="let option of poll.options">
+          <div class="option-info">
+            <span class="option-text">{{ option }}</span>
+            <span class="percentage-val">{{ getOptionPercentage(poll, option) }}%</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill" [style.width.%]="getOptionPercentage(poll, option)"></div>
+          </div>
+          <span class="vote-count-raw">{{ poll.results[option] || 0 | number }} votes</span>
+        </div>
+  
+        <div class="poll-summary">
+          <span>Total votes cast: <strong>{{ getTotalVotes(poll) | number }}</strong></span>
+        </div>
+      </div>
+  
+      <!-- Voting Mode -->
+      <ng-template #voteMode>
+        <div class="options-list">
+          <label class="option-label-radio" *ngFor="let option of poll.options">
+            <input 
+              type="radio" 
+              [name]="'poll-' + poll.id" 
+              [value]="option" 
+              [(ngModel)]="poll.selectedOption">
+            <span class="custom-radio"></span>
+            <span class="option-text">{{ option }}</span>
+          </label>
+        </div>
+  
+        <button 
+          class="vote-btn" 
+          (click)="castVote(poll, poll.selectedOption || '')">
+          Cast My Vote
+        </button>
+      </ng-template>
+    </div>
+  </div>
+  
+  <ng-template #noActive>
+    <div class="empty-state">
+      <p>There are no active polls in your region at the moment.</p>
+    </div>
+  </ng-template>
+  
+  
+  <!-- CLOSED POLLS SECTION -->
+  <div class="section-title closed-section-title">
+    <h3>Closed Polls</h3>
+  </div>
+  
+  <div class="polls-grid" *ngIf="closedPolls.length > 0; else noClosed">
+    <div class="poll-card closed-card" *ngFor="let poll of closedPolls">
+      <div class="poll-top">
+        <span class="badge closed-badge">🔒 Closed</span>
+        <span class="date-range">Ended {{ poll.endDate | date:'mediumDate' }}</span>
+      </div>
+  
+      <h4>{{ poll.title }}</h4>
+      <p class="description">{{ poll.description }}</p>
+  
+      <!-- Closed Results Mode -->
+      <div class="results-container">
+        <div class="option-bar-wrapper" *ngFor="let option of poll.options">
+          <div class="option-info">
+            <span class="option-text">{{ option }}</span>
+            <span class="percentage-val">{{ getOptionPercentage(poll, option) }}%</span>
+          </div>
+          <div class="bar-bg">
+            <div class="bar-fill gold-bar" [style.width.%]="getOptionPercentage(poll, option)"></div>
+          </div>
+          <span class="vote-count-raw">{{ poll.results[option] || 0 | number }} votes</span>
+        </div>
+  
+        <div class="poll-summary">
+          <span>Final total votes: <strong>{{ getTotalVotes(poll) | number }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noClosed>
+    <div class="empty-state">
+      <p>No recently closed polls available.</p>
+    </div>
+  </ng-template>
+</ng-template>

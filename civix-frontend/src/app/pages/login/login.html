@@ -1,0 +1,214 @@
+<div class="login-container">
+
+  <!-- Google Fonts: add these once, in index.html <head> or via @import in styles.css
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Public+Sans:wght@300;400;600;700&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  -->
+
+  <!-- LEFT PANEL -->
+
+  <div class="left-panel">
+
+    <div class="brand">
+
+      <div class="seal">
+        <span>C</span>
+      </div>
+
+      <div>
+        <h2>CIVIX</h2>
+        <small>Digital Civic Engagement Platform</small>
+      </div>
+
+    </div>
+
+    <div class="hero">
+
+      <h1>Welcome back.<br>Your voice is on record.</h1>
+
+      <p>
+        Sign in to pick up where you left off — draft a petition,
+        cast a vote, or check how your local officials responded.
+      </p>
+
+    </div>
+
+    <div class="feature-list">
+
+      <div class="feature-row">
+        <div class="feature-mark">01</div>
+        <div>
+          <h4>File a Petition</h4>
+          <small>Put issues affecting your community on the record.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">02</div>
+        <div>
+          <h4>Vote in Polls</h4>
+          <small>Have a direct say in community decisions.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">03</div>
+        <div>
+          <h4>Track Officials</h4>
+          <small>Follow responses to petitions you care about.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">04</div>
+        <div>
+          <h4>Real-time Updates</h4>
+          <small>Stay ahead of civic activity as it happens.</small>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+
+  <div class="right-panel">
+
+    <div class="login-card">
+
+      <div class="eyebrow">Member sign-in</div>
+      <h2>Welcome Back</h2>
+
+      <p class="subtitle">
+        Log in to continue to your account
+      </p>
+
+      <!-- Error -->
+
+      <div
+        class="alert"
+        *ngIf="errorMessage"
+        role="alert">
+
+        {{ errorMessage }}
+
+      </div>
+
+      <!-- Role Selector Toggle -->
+      <div class="role-selector">
+        <button
+          type="button"
+          class="role-tab"
+          [class.active]="selectedRole === 'CITIZEN'"
+          (click)="selectRole('CITIZEN')">
+          Login as Citizen
+        </button>
+        <button
+          type="button"
+          class="role-tab"
+          [class.active]="selectedRole === 'OFFICIAL'"
+          (click)="selectRole('OFFICIAL')">
+          Login as Official
+        </button>
+      </div>
+
+      <form (ngSubmit)="onLogin()" novalidate>
+
+        <!-- EMAIL -->
+
+        <div class="input-group">
+
+          <label for="email">Email</label>
+
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            [class.invalid]="errorMessage"
+            placeholder="you@example.com"
+            autocomplete="email">
+
+        </div>
+
+        <!-- PASSWORD -->
+
+        <div class="input-group">
+
+          <label for="password">Password</label>
+
+          <div class="password-wrapper">
+
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="password"
+              name="password"
+              [class.invalid]="errorMessage"
+              placeholder="Enter your password"
+              autocomplete="current-password">
+
+            <button
+              type="button"
+              class="eye-btn"
+              (click)="togglePassword()"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+
+              {{ showPassword ? '🙈' : '👁' }}
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- OPTIONS -->
+
+        <div class="options">
+
+          <label>
+
+            <input
+              type="checkbox"
+              [(ngModel)]="rememberMe"
+              name="remember">
+
+            Remember me
+
+          </label>
+
+          <a href="#">
+            Forgot password?
+          </a>
+
+        </div>
+
+        <!-- LOGIN -->
+
+        <button
+          class="login-btn"
+          type="submit"
+          [disabled]="loading">
+
+          {{ loading ? 'Logging in…' : 'Log in' }}
+
+        </button>
+
+      </form>
+
+      <div class="register-link">
+
+        Don't have an account?
+
+        <a routerLink="/register">
+          Register here
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

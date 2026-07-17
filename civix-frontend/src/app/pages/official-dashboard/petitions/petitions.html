@@ -1,0 +1,84 @@
+<div class="petitions-header">
+  <div>
+    <h2>Petitions Management</h2>
+    <p>Review active petitions filed in <strong>{{ location }}</strong>, update their statuses, and add official comments.</p>
+  </div>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading petitions for your municipal jurisdiction...</p>
+</div>
+
+<ng-template #content>
+  <!-- Petitions Grid -->
+  <div class="petitions-grid" *ngIf="petitions.length > 0; else noPetitions">
+    <div class="petition-card" *ngFor="let petition of petitions" [class.resolved]="petition.status === 'RESOLVED'">
+      <div class="card-top">
+        <span class="category-tag">{{ petition.category }}</span>
+        <span class="status-badge" [class]="petition.status.toLowerCase()">
+          {{ petition.status.replace('_', ' ') }}
+        </span>
+      </div>
+
+      <h3>{{ petition.title }}</h3>
+      <p class="description">{{ petition.description }}</p>
+
+      <!-- Signatures Progress Meter -->
+      <div class="progress-section">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="(petition.currentSignatures / petition.targetSignatures) * 100">
+          </div>
+        </div>
+        <div class="progress-stats">
+          <span><strong>{{ petition.currentSignatures | number }}</strong> / {{ petition.targetSignatures | number }} signatures</span>
+          <span>Goal: {{ petition.targetSignatures | number }}</span>
+        </div>
+      </div>
+
+      <!-- Administrative Action Panel -->
+      <div class="action-panel">
+        <h4>Administrative Action</h4>
+        
+        <div class="form-group">
+          <label [for]="'status-' + petition.id">Set Status</label>
+          <select [id]="'status-' + petition.id" [(ngModel)]="petition.status">
+            <option *ngFor="let opt of statusOptions" [value]="opt">
+              {{ opt.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label [for]="'comment-' + petition.id">Official Response / Comment</label>
+          <textarea
+            [id]="'comment-' + petition.id"
+            [(ngModel)]="petition.officialResponse"
+            rows="3"
+            placeholder="Enter the official response or action plan updates..."></textarea>
+        </div>
+
+        <button class="save-review-btn" (click)="updatePetitionStatus(petition)" [disabled]="submittingMap[petition.id]">
+          {{ submittingMap[petition.id] ? 'Saving...' : '💾 Save Review & Response' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noPetitions>
+    <div class="empty-state">
+      <p>No community petitions found for the location <strong>{{ location }}</strong>.</p>
+    </div>
+  </ng-template>
+</ng-template>

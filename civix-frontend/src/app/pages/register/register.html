@@ -1,0 +1,311 @@
+<div class="login-container">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="brand">
+      <div class="seal">
+        <span>C</span>
+      </div>
+      <div>
+        <h2>CIVIX</h2>
+        <small>Digital Civic Engagement Platform</small>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1>Join your community.<br>Shape your city.</h1>
+      <p>
+        Create your CIVIX account to raise local issues,
+        support community petitions,
+        participate in public polls,
+        and collaborate with officials to improve your city.
+      </p>
+    </div>
+
+    <div class="feature-list">
+      <div class="feature-row">
+        <div class="feature-mark">01</div>
+        <div>
+          <h4>Create Petitions</h4>
+          <small>Raise issues that matter to your neighborhood and community.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">02</div>
+        <div>
+          <h4>Support Community Causes</h4>
+          <small>Vote and support petitions created by other citizens.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">03</div>
+        <div>
+          <h4>Connect With Officials</h4>
+          <small>Receive transparent updates directly from verified authorities.</small>
+        </div>
+      </div>
+
+      <div class="feature-row">
+        <div class="feature-mark">04</div>
+        <div>
+          <h4>Location-Based Governance</h4>
+          <small>Access petitions, announcements, and civic initiatives specific to your city.</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-container">
+      <p class="quote">"Every voice has the power to create change."</p>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="login-card">
+
+      <div class="eyebrow">Create your account</div>
+      <h2>Create Account</h2>
+
+      <p class="subtitle">
+        Join CIVIX and start participating in your local community.
+      </p>
+
+      <!-- Error -->
+      <div
+        class="alert"
+        *ngIf="errorMessage"
+        role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <form (ngSubmit)="onRegister()" novalidate>
+
+        <!-- FULL NAME -->
+        <div class="input-group">
+          <label for="name">Full Name</label>
+          <input
+            id="name"
+            type="text"
+            [(ngModel)]="name"
+            name="name"
+            (ngModelChange)="updateErrorMessage()"
+            [class.invalid]="errorMessage && errorMessage.includes('Name')"
+            placeholder="John Doe"
+            autocomplete="name">
+        </div>
+
+        <!-- EMAIL -->
+        <div class="input-group">
+          <label for="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            (ngModelChange)="updateErrorMessage()"
+            [class.invalid]="errorMessage && (errorMessage.includes('email') || errorMessage.includes('registered'))"
+            placeholder="you@example.com"
+            autocomplete="email">
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="input-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="password"
+              name="password"
+              (ngModelChange)="updateErrorMessage()"
+              [class.invalid]="errorMessage && errorMessage.includes('Password') && !errorMessage.includes('Confirm')"
+              placeholder="Enter your password"
+              autocomplete="new-password">
+            <button
+              type="button"
+              class="eye-btn"
+              (click)="showPassword = !showPassword"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+              {{ showPassword ? '🙈' : '👁' }}
+            </button>
+          </div>
+
+          <!-- Strength Bar -->
+          <div class="strength-bar-container" *ngIf="password">
+            <div class="strength-bar" [class]="'strength-' + getPasswordStrength()"></div>
+            <small class="strength-label">Password strength: {{ getPasswordStrengthLabel() }}</small>
+          </div>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="input-group">
+          <label for="confirmPassword">Confirm Password</label>
+          <div class="password-wrapper">
+            <input
+              id="confirmPassword"
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              (ngModelChange)="updateErrorMessage()"
+              [class.invalid]="errorMessage && (errorMessage.includes('Confirm') || errorMessage.includes('match'))"
+              placeholder="Confirm your password"
+              autocomplete="new-password">
+            <button
+              type="button"
+              class="eye-btn"
+              (click)="showConfirmPassword = !showConfirmPassword"
+              [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'">
+              {{ showConfirmPassword ? '🙈' : '👁' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- ROLE -->
+        <div class="input-group">
+          <label for="role">Role</label>
+          <div class="select-wrapper">
+            <select
+              id="role"
+              [(ngModel)]="role"
+              name="role"
+              (ngModelChange)="updateErrorMessage()"
+              [class.invalid]="errorMessage && errorMessage.includes('Role')">
+              <option value="" disabled selected>Select Role</option>
+              <option value="CITIZEN">Citizen</option>
+              <option value="OFFICIAL">Official</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- LOCATION SECTION -->
+        <div class="location-section-title">Location</div>
+
+        <!-- GPS BUTTON -->
+        <div class="gps-btn-container">
+          <button
+            type="button"
+            class="gps-btn"
+            (click)="useCurrentLocation()"
+            [disabled]="loadingLocation">
+            <span *ngIf="!loadingLocation">📍 Use Current Location</span>
+            <span *ngIf="loadingLocation">⏳ Detecting location...</span>
+          </button>
+          
+          <div class="location-badge success" *ngIf="locationDetected">
+            ✓ Location Detected
+          </div>
+          
+          <button
+            type="button"
+            class="clear-gps-btn"
+            *ngIf="locationDetected"
+            (click)="clearGeolocation()">
+            Edit Manually
+          </button>
+        </div>
+
+        <!-- STATE -->
+        <div class="custom-select-container">
+          <div class="input-group">
+            <label for="stateSearch">State</label>
+            <div class="select-search-wrapper">
+              <input
+                id="stateSearch"
+                type="text"
+                [(ngModel)]="stateSearchQuery"
+                name="stateSearch"
+                (focus)="showStateDropdown = true"
+                (blur)="onStateBlur()"
+                [disabled]="locationDetected"
+                placeholder="Search and select State"
+                [class.invalid]="errorMessage && errorMessage.includes('State')">
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-list" *ngIf="showStateDropdown && !locationDetected">
+              <div
+                class="dropdown-item"
+                *ngFor="let state of filteredStates()"
+                (mousedown)="selectState(state)">
+                {{ state }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CITY -->
+        <div class="custom-select-container">
+          <div class="input-group">
+            <label for="citySearch">City</label>
+            <div class="select-search-wrapper">
+              <input
+                id="citySearch"
+                type="text"
+                [disabled]="!selectedState || locationDetected"
+                [(ngModel)]="citySearchQuery"
+                name="citySearch"
+                (focus)="showCityDropdown = true"
+                (blur)="onCityBlur()"
+                placeholder="{{ selectedState ? 'Search and select City' : 'Select a State first' }}"
+                [class.invalid]="errorMessage && errorMessage.includes('City')">
+              <span class="dropdown-arrow">▼</span>
+            </div>
+            <div class="dropdown-list" *ngIf="showCityDropdown && selectedState && !locationDetected">
+              <div
+                class="dropdown-item"
+                *ngFor="let city of filteredCities()"
+                (mousedown)="selectCity(city)">
+                {{ city }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LATITUDE -->
+        <div class="input-group" *ngIf="gpsUsed">
+          <label for="latitude">Latitude</label>
+          <input
+            id="latitude"
+            type="number"
+            [ngModel]="latitude"
+            name="latitude"
+            readonly
+            disabled>
+        </div>
+
+        <!-- LONGITUDE -->
+        <div class="input-group" *ngIf="gpsUsed">
+          <label for="longitude">Longitude</label>
+          <input
+            id="longitude"
+            type="number"
+            [ngModel]="longitude"
+            name="longitude"
+            readonly
+            disabled>
+        </div>
+
+        <!-- SUBMIT -->
+        <button
+          class="login-btn"
+          type="submit"
+          [disabled]="loading || !isFormValid()">
+          {{ loading ? 'Creating Account…' : 'Create Account' }}
+        </button>
+
+      </form>
+
+      <div class="register-link">
+        Already have an account?
+        <a routerLink="/login">Log in here</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

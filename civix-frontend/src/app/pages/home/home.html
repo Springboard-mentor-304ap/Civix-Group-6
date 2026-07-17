@@ -1,0 +1,269 @@
+<!-- CIVIX Sticky Navbar -->
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="nav-container">
+    <a routerLink="/" class="logo-group">
+      <div class="seal-small">
+        <span>C</span>
+      </div>
+      <div class="logo-text-wrapper">
+        <span class="logo-text">CIVIX</span>
+        <span class="logo-sub">CIVIC LEDGER</span>
+      </div>
+    </a>
+    
+    <div class="nav-links">
+      <a href="#why-civix" (click)="smoothScroll($event, 'why-civix')">Why CIVIX?</a>
+      <a href="#how-it-works" (click)="smoothScroll($event, 'how-it-works')">How It Works</a>
+      <a href="#stats" (click)="smoothScroll($event, 'stats')">Our Impact</a>
+    </div>
+    
+    <div class="nav-actions">
+      <a routerLink="/login" class="btn-ghost">Sign In</a>
+      <a routerLink="/register" class="btn-solid">Get Started Free</a>
+    </div>
+
+    <!-- Hamburger menu button -->
+    <button class="mobile-toggle" (click)="toggleMobileMenu()" [attr.aria-label]="mobileMenuOpen ? 'Close menu' : 'Open menu'">
+      <div class="hamburger" [class.open]="mobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </button>
+  </div>
+  
+  <!-- Mobile Links Dropdown -->
+  <div class="mobile-menu" [class.open]="mobileMenuOpen">
+    <a href="#why-civix" (click)="smoothScroll($event, 'why-civix'); closeMobileMenu()">Why CIVIX?</a>
+    <a href="#how-it-works" (click)="smoothScroll($event, 'how-it-works'); closeMobileMenu()">How It Works</a>
+    <a href="#stats" (click)="smoothScroll($event, 'stats'); closeMobileMenu()">Our Impact</a>
+    <div class="mobile-actions">
+      <a routerLink="/login" class="btn-ghost-mobile" (click)="closeMobileMenu()">Sign In</a>
+      <a routerLink="/register" class="btn-solid-mobile" (click)="closeMobileMenu()">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="hero-section">
+  <!-- Glowing gradient background elements -->
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+  
+  <div class="hero-container">
+    <div class="hero-content">
+      <div class="trust-badge">
+        <span>🎉</span> Trusted by 5,000+ citizens across India
+      </div>
+      
+      <h1>Make Your Voice Matter in Real Governance.</h1>
+      
+      <p class="hero-subtext">
+        File petitions, vote on local issues, and hold your officials accountable — all in one transparent, verified platform.
+      </p>
+      
+      <div class="hero-ctas">
+        <a routerLink="/register" class="btn-solid btn-hero-primary">Get Started Free</a>
+        <a routerLink="/login" class="btn-outline btn-hero-secondary">Sign In</a>
+      </div>
+    </div>
+    
+    <!-- Floating Mockup UI Cards -->
+    <div class="hero-mockups">
+      <!-- Mockup 1: Active Petition Card -->
+      <div class="mockup-card float-card-1">
+        <div class="mockup-header">
+          <span class="mockup-tag red-tag">🔴 Active Petition</span>
+          <span class="mockup-date">Due in 14d</span>
+        </div>
+        <h3>Clean Up Yamuna River Initiative</h3>
+        <p class="mockup-desc">Urging municipal corporation to install sewage treatment filters at Wazirabad discharge point.</p>
+        <div class="mockup-progress-wrapper">
+          <div class="mockup-progress-bar">
+            <div class="mockup-progress-fill" style="width: 84%"></div>
+          </div>
+          <div class="mockup-progress-stats">
+            <span class="signatures-count"><strong>4,208</strong> signed</span>
+            <span class="target-count">Target: 5,000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mockup 2: Live Poll Card -->
+      <div class="mockup-card float-card-2">
+        <div class="mockup-header">
+          <span class="mockup-tag green-tag">🗳️ Voting Live</span>
+          <span class="mockup-votes-total">1,248 votes</span>
+        </div>
+        <h3>Proposal for Local Park Revitalization</h3>
+        <div class="mockup-poll-options">
+          <div class="poll-option-row">
+            <div class="poll-option-fill" style="width: 72%"></div>
+            <span class="option-label">Option A: Green Park / Play Area</span>
+            <span class="option-percent">72%</span>
+          </div>
+          <div class="poll-option-row">
+            <div class="poll-option-fill" style="width: 28%"></div>
+            <span class="option-label">Option B: Community Gym / Center</span>
+            <span class="option-percent">28%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Why CIVIX Section -->
+<section id="why-civix" class="why-section">
+  <div class="section-container">
+    <div class="section-header">
+      <span class="section-eyebrow">FEATURES</span>
+      <h2>Why CIVIX?</h2>
+      <p class="section-sub">A platform engineered for authentic citizen-led change, avoiding noise and prioritizing accountability.</p>
+    </div>
+    
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon-box">🏛️</div>
+        <h3>Transparent Governance</h3>
+        <p>Every petition and official response is permanently recorded and visible to the community, leaving no room for ignored issues.</p>
+        <div class="card-glow"></div>
+      </div>
+      
+      <div class="why-card">
+        <div class="why-icon-box">🗳️</div>
+        <h3>Real-time Civic Participation</h3>
+        <p>Participate in official town polls. Vote on local policy proposals and see verifiable community choices instantly.</p>
+        <div class="card-glow"></div>
+      </div>
+      
+      <div class="why-card">
+        <div class="why-icon-box">✅</div>
+        <h3>Verified Citizen Voice</h3>
+        <p>Every user account undergoes verification. Say goodbye to bots and duplicate opinions — we ensure only real voices are counted.</p>
+        <div class="card-glow"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="how-section">
+  <div class="section-container">
+    <div class="section-header">
+      <span class="section-eyebrow">STEPS</span>
+      <h2>How It Works</h2>
+      <p class="section-sub">Bringing change to your community in three simple steps.</p>
+    </div>
+    
+    <div class="how-flow">
+      <!-- Dotted Line Connectors for Desktop -->
+      <div class="flow-connector connector-1"></div>
+      <div class="flow-connector connector-2"></div>
+      
+      <div class="how-step">
+        <div class="step-num">01</div>
+        <div class="step-icon-wrapper">
+          <div class="step-icon">📄</div>
+        </div>
+        <h3>File a Petition</h3>
+        <p>Draft your community proposal, outline the core problem, and gather digital signatures from verified neighbors.</p>
+      </div>
+      
+      <div class="how-step">
+        <div class="step-num">02</div>
+        <div class="step-icon-wrapper">
+          <div class="step-icon">🗳️</div>
+        </div>
+        <h3>Vote in Polls</h3>
+        <p>Participate in active polls regarding municipal decisions and local resource allocation. Every vote is secure and certified.</p>
+      </div>
+      
+      <div class="how-step">
+        <div class="step-num">03</div>
+        <div class="step-icon-wrapper">
+          <div class="step-icon">🏛️</div>
+        </div>
+        <h3>Get Official Responses</h3>
+        <p>Once threshold signatures are met, local administrators review the records and respond directly with concrete action plans.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Bar Section -->
+<section id="stats" class="stats-section">
+  <div class="stats-bg-pattern"></div>
+  <div class="section-container">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-glow"></div>
+        <div class="stat-number-wrapper">
+          <span class="stat-num" data-target="12450">0</span>
+          <span class="stat-plus">+</span>
+        </div>
+        <div class="stat-label">Petitions Filed</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-glow"></div>
+        <div class="stat-number-wrapper">
+          <span class="stat-num" data-target="8300">0</span>
+          <span class="stat-plus">+</span>
+        </div>
+        <div class="stat-label">Active Voters</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-glow"></div>
+        <div class="stat-number-wrapper">
+          <span class="stat-num" data-target="150">0</span>
+          <span class="stat-plus">+</span>
+        </div>
+        <div class="stat-label">Officials Onboarded</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-glow"></div>
+        <div class="stat-number-wrapper">
+          <span class="stat-num" data-target="95">0</span>
+          <span class="stat-plus">%</span>
+        </div>
+        <div class="stat-label">Response Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA Section -->
+<section class="final-cta">
+  <div class="glow-sphere glow-cta"></div>
+  <div class="cta-container">
+    <h2>Ready to make an impact?</h2>
+    <p>Join thousands of verified citizens shaping their communities through direct engagement.</p>
+    <a routerLink="/register" class="btn-solid btn-cta-large">Get Started Free</a>
+    <span class="cta-disclaimer">No credit card required. Takes less than 2 minutes.</span>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="main-footer">
+  <div class="footer-container">
+    <div class="footer-brand">
+      <div class="logo-group">
+        <div class="seal-small"><span>C</span></div>
+        <span class="logo-text">CIVIX</span>
+      </div>
+      <p class="footer-tagline">Connecting citizens with representatives for transparent, accountable governance.</p>
+    </div>
+    
+    <div class="footer-links">
+      <a routerLink="/">Home</a>
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register">Register</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 CIVIX - Digital Civic Engagement Platform. All rights reserved.</p>
+  </div>
+</footer>
