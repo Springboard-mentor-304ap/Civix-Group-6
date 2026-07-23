@@ -1,0 +1,106 @@
+<div class="officials-header">
+  <h2>Local Public Officials</h2>
+  <p>Find and connect directly with verified public representatives of your municipal constituency.</p>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Search Input -->
+<div class="search-bar">
+  <input 
+    type="text" 
+    [(ngModel)]="searchText" 
+    (input)="applyFilter()" 
+    placeholder="Search by name, city, or state...">
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading constituency directories...</p>
+</div>
+
+<ng-template #content>
+  <!-- Officials Grid -->
+  <div class="officials-grid" *ngIf="filteredOfficials.length > 0; else noOfficials">
+    <div class="official-card" *ngFor="let official of filteredOfficials">
+      <div class="card-header">
+        <div class="avatar-official">🏛️</div>
+        <div>
+          <h4>{{ official.name }}</h4>
+          <span class="badge official-badge">Official Representative</span>
+        </div>
+      </div>
+
+      <div class="card-details">
+        <div class="detail-item">
+          <span class="icon">✉️</span> 
+          <a [href]="'mailto:' + official.email">{{ official.email }}</a>
+        </div>
+        <div class="detail-item">
+          <span class="icon">📍</span> 
+          <span>{{ official.city || 'Delhi' }}, {{ official.state || 'Delhi' }}</span>
+        </div>
+      </div>
+
+      <button class="message-btn" (click)="openMessageModal(official)">
+        💬 Send Message
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noOfficials>
+    <div class="empty-state">
+      <p>No verified officials found matching your search.</p>
+    </div>
+  </ng-template>
+</ng-template>
+
+
+<!-- Send Message Modal -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Message to {{ selectedOfficial?.name }}</h3>
+      <button class="close-modal-btn" (click)="closeMessageModal()">&times;</button>
+    </div>
+
+    <form (ngSubmit)="sendMessage()" novalidate>
+      <p class="modal-instruction">
+        Draft your query or grievance clearly. Your registered citizen email will be shared automatically.
+      </p>
+
+      <div class="form-group">
+        <label for="messageText">Message Description <span class="required">*</span></label>
+        <textarea 
+          id="messageText" 
+          [(ngModel)]="messageText" 
+          name="messageText" 
+          rows="5" 
+          placeholder="Explain your community query or concern..."
+          required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Priority Level</label>
+        <select id="priority" [(ngModel)]="priorityValue" name="priorityValue">
+          <option value="NORMAL">Normal Priority</option>
+          <option value="URGENT">Urgent Priority</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeMessageModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Sending...' : 'Submit Message' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<header class="header">
+  <div class="welcome-box">
+    <h1>Welcome, Administrator <span class="highlight">{{ username }}</span></h1>
+    <p>CIVIX Administrative Panel — Oversee petitions, draft community polls, and reply to queries.</p>
+  </div>
+
+  <div class="user-badge">
+    <div class="avatar">🏛️</div>
+    <div class="badge-info">
+      <strong>{{ email }}</strong>
+      <span class="role-pill">{{ role }}</span>
+    </div>
+  </div>
+</header>
+
+<!-- Alert messages -->
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading administrative dashboard...</p>
+</div>
+
+<ng-template #content>
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Pending Petitions</span>
+        <span class="stat-icon yellow">📜</span>
+      </div>
+      <h2 class="stat-value">{{ pendingPetitionsCount }}</h2>
+      <p class="stat-desc">Requiring administrative review</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Active Polls</span>
+        <span class="stat-icon blue">🗳️</span>
+      </div>
+      <h2 class="stat-value">{{ activePollsCount }}</h2>
+      <p class="stat-desc">Live community voting sessions</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Unresolved Queries</span>
+        <span class="stat-icon purple">💬</span>
+      </div>
+      <h2 class="stat-value">{{ unresolvedQueriesCount }}</h2>
+      <p class="stat-desc">Unanswered citizen messages</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <section class="section">
+    <h3>Administrative Actions</h3>
+    <div class="actions-grid">
+      <button class="action-card" (click)="navigateTo('petitions')">
+        <h4>📜 Review Petitions</h4>
+        <p>Assess community-filed petitions, add comments, and approve/resolve requests.</p>
+      </button>
+      <button class="action-card" (click)="navigateTo('polls')">
+        <h4>🗳️ Create New Poll</h4>
+        <p>Draft and launch new consensus voting sessions regarding municipal budget allocations.</p>
+      </button>
+      <button class="action-card" (click)="navigateTo('queries')">
+        <h4>💬 View Citizen Queries</h4>
+        <p>Read and reply to queries or grievances submitted directly by constituency members.</p>
+      </button>
+    </div>
+  </section>
+</ng-template>

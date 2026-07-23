@@ -1,0 +1,153 @@
+.profile-header {
+  margin-bottom: 30px;
+}
+
+.profile-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0d3b2e;
+}
+
+.profile-header p {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Alert Boxes */
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert.success {
+  background-color: #eafcf8;
+  color: #0d3b2e;
+  border: 1px solid rgba(22, 160, 133, 0.2);
+}
+
+.alert.error {
+  background-color: #fbede9;
+  color: #a63d2f;
+  border: 1px solid rgba(166, 61, 47, 0.2);
+}
+
+/* Profile Form Card */
+.profile-card {
+  background: white;
+  border: 1px solid #e4dfd1;
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  grid-column: span 2;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-group.disabled input {
+  background-color: #F7F4EC;
+  color: #767066;
+  border-color: #e4dfd1;
+  cursor: not-allowed;
+}
+
+.field-help {
+  font-size: 11.5px;
+  color: #767066;
+  margin-top: 2px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #232120;
+}
+
+.form-group input {
+  height: 44px;
+  border: 1px solid #e4dfd1;
+  border-radius: 6px;
+  padding: 0 12px;
+  background-color: #FCFBF8;
+  font-family: inherit;
+  font-size: 14.5px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-group input:focus:not(:disabled) {
+  border-color: #16a085;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(22,160,133,0.08);
+}
+
+.required {
+  color: #a63d2f;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 32px;
+  border-top: 1px solid #e4dfd1;
+  padding-top: 24px;
+}
+
+.save-btn {
+  background-color: #16a085;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(22, 160, 133, 0.2);
+  transition: background-color 0.2s;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: #1abc9c;
+}
+
+.save-btn:disabled {
+  background-color: #e4dfd1;
+  color: #767066;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-row {
+    grid-column: span 1;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .profile-card {
+    padding: 24px;
+  }
+}

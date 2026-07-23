@@ -1,0 +1,167 @@
+<div class="polls-header">
+  <div>
+    <h2>Polls Management</h2>
+    <p>Monitor community consensus voting, close running sessions, or launch new municipal polls.</p>
+  </div>
+  <button class="create-btn" (click)="openModal()">
+    <span>+</span> Create New Poll
+  </button>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading municipal poll listings...</p>
+</div>
+
+<ng-template #content>
+  <!-- Polls Listing Grid -->
+  <div class="polls-grid" *ngIf="polls.length > 0; else noPolls">
+    <div class="poll-card" *ngFor="let poll of polls" [class.closed]="poll.status === 'CLOSED'">
+      <div class="poll-top">
+        <span class="badge" [class.live]="poll.status === 'ACTIVE'" [class.closed-badge]="poll.status === 'CLOSED'">
+          {{ poll.status === 'ACTIVE' ? '🗳️ Active' : '🔒 Closed' }}
+        </span>
+        <span class="date-range">
+          {{ poll.startDate | date:'mediumDate' }} - {{ poll.endDate | date:'mediumDate' }}
+        </span>
+      </div>
+  
+      <h4>{{ poll.title }}</h4>
+      <p class="description">{{ poll.description }}</p>
+  
+      <!-- Results Charts -->
+      <div class="results-container">
+        <h5>Consensus Breakdown</h5>
+        
+        <div class="option-bar-wrapper" *ngFor="let option of poll.options">
+          <div class="option-info">
+            <span class="option-text">{{ option }}</span>
+            <span class="percentage-val">{{ getOptionPercentage(poll, option) }}%</span>
+          </div>
+          <div class="bar-bg">
+            <div 
+              class="bar-fill" 
+              [class.gold-bar]="poll.status === 'CLOSED'"
+              [style.width.%]="getOptionPercentage(poll, option)">
+            </div>
+          </div>
+          <span class="vote-count-raw">{{ poll.results[option] || 0 | number }} votes</span>
+        </div>
+  
+        <div class="poll-summary">
+          <span>Total votes: <strong>{{ getTotalVotes(poll) | number }}</strong></span>
+        </div>
+      </div>
+  
+      <!-- Actions Panel -->
+      <div class="card-footer" *ngIf="poll.status === 'ACTIVE'">
+        <button class="close-btn" (click)="closePoll(poll)" [disabled]="closingMap[poll.id]">
+          {{ closingMap[poll.id] ? 'Closing...' : '🔒 Close Poll Immediately' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noPolls>
+    <div class="empty-state">
+      <p>You have not drafted any municipal polls yet. Click the button above to launch one.</p>
+    </div>
+  </ng-template>
+</ng-template>
+
+<!-- Create New Poll Modal -->
+<div class="modal-overlay" *ngIf="showCreateModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Create New Municipal Poll</h3>
+      <button class="close-modal-btn" (click)="closeModal()">&times;</button>
+    </div>
+    
+    <form (ngSubmit)="onCreatePoll()" novalidate>
+      <div class="form-group">
+        <label for="title">Poll Title <span class="required">*</span></label>
+        <input 
+          id="title" 
+          type="text" 
+          [(ngModel)]="newTitle" 
+          name="title" 
+          placeholder="e.g. Allocation of Park Development Budget" 
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description <span class="required">*</span></label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="newDescription" 
+          name="description" 
+          rows="3" 
+          placeholder="Explain the background and the options citizens are voting on..."
+          required></textarea>
+      </div>
+
+      <!-- Dynamic Options List -->
+      <div class="form-group options-group">
+        <label>Options <span class="required">*</span></label>
+        
+        <div class="option-input-row" *ngFor="let opt of newOptions; let i = index; trackBy: trackByIndex">
+          <input 
+            type="text" 
+            [(ngModel)]="newOptions[i]" 
+            [name]="'option-' + i" 
+            placeholder="Option choice description" 
+            required>
+          <button 
+            type="button" 
+            class="remove-opt-btn" 
+            (click)="removeOptionInput(i)" 
+            [disabled]="newOptions.length <= 2">
+            &times;
+          </button>
+        </div>
+
+        <button type="button" class="add-opt-btn" (click)="addOptionInput()">
+          ➕ Add Option Choice
+        </button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startDate">Start Date <span class="required">*</span></label>
+          <input 
+            id="startDate" 
+            type="date" 
+            [(ngModel)]="newStartDate" 
+            name="startDate" 
+            required>
+        </div>
+
+        <div class="form-group">
+          <label for="endDate">End Date <span class="required">*</span></label>
+          <input 
+            id="endDate" 
+            type="date" 
+            [(ngModel)]="newEndDate" 
+            name="endDate" 
+            required>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Launching...' : 'Launch Poll' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

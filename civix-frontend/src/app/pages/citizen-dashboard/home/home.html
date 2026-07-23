@@ -1,0 +1,76 @@
+<header class="header">
+  <div class="welcome-box">
+    <h1>Welcome Back, <span class="highlight">{{ username }}</span></h1>
+    <p>Here is your civic overview for today.</p>
+  </div>
+
+  <div class="user-badge">
+    <div class="avatar">👤</div>
+    <div class="badge-info">
+      <strong>{{ email }}</strong>
+      <span class="role-pill">{{ role }}</span>
+    </div>
+  </div>
+</header>
+
+<!-- Alert messages -->
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Syncing civic registry details...</p>
+</div>
+
+<ng-template #content>
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Active Petitions</span>
+        <span class="stat-icon green">📜</span>
+      </div>
+      <h2 class="stat-value">{{ activePetitionsCount }}</h2>
+      <p class="stat-desc">Community initiatives open for signing</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Polls Participated</span>
+        <span class="stat-icon blue">🗳️</span>
+      </div>
+      <h2 class="stat-value">{{ pollsParticipatedCount }}</h2>
+      <p class="stat-desc">Decisions shaped by your voice</p>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header">
+        <span>Official Responses</span>
+        <span class="stat-icon purple">🏛️</span>
+      </div>
+      <h2 class="stat-value">{{ officialResponsesCount }}</h2>
+      <p class="stat-desc">Replies received from administrators</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <section class="section">
+    <h3>Quick Actions</h3>
+    <div class="actions-grid">
+      <button class="action-card" (click)="navigateTo('petitions')">
+        <h4>✍️ Draft a New Petition</h4>
+        <p>Collect signatures for local community improvement initiatives.</p>
+      </button>
+      <button class="action-card" (click)="navigateTo('polls')">
+        <h4>🗳️ Cast Your Vote</h4>
+        <p>Participate in active decisions regarding public parks and recreation budgets.</p>
+      </button>
+      <button class="action-card" (click)="navigateTo('officials')">
+        <h4>💬 Contact Officials</h4>
+        <p>Message verified public representatives for your district.</p>
+      </button>
+    </div>
+  </section>
+</ng-template>

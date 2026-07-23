@@ -1,0 +1,431 @@
+.petitions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.petitions-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0d3b2e;
+}
+
+.petitions-header p {
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.refresh-btn {
+  background: white;
+  border: 1px solid #e4dfd1;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0d3b2e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: #f7f4ec;
+  border-color: #d97706;
+}
+
+/* Alert Boxes */
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert.success {
+  background-color: #eafcf8;
+  color: #0d3b2e;
+  border: 1px solid rgba(22, 160, 133, 0.2);
+}
+
+.alert.error {
+  background-color: #fbede9;
+  color: #a63d2f;
+  border: 1px solid rgba(166, 61, 47, 0.2);
+}
+
+/* Filters Bar */
+.filters-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e4dfd1;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-group.search {
+  flex: 1;
+  min-width: 220px;
+}
+
+.filter-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #767066;
+  text-transform: uppercase;
+}
+
+.filter-group input,
+.filter-group select {
+  border: 1px solid #e4dfd1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  outline: none;
+  background-color: #FCFBF8;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  border-color: #d97706;
+  background-color: white;
+}
+
+/* Grid & Cards */
+.petitions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.petition-card {
+  background: white;
+  border: 1px solid #e4dfd1;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.petition-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.category-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #d97706;
+  background-color: rgba(217, 119, 6, 0.08);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+.status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.under_review {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge.approved {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.rejected {
+  background-color: #fbede9;
+  color: #a63d2f;
+}
+
+.status-badge.resolved {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.status-badge.active {
+  background-color: #eafcf8;
+  color: #0d3b2e;
+}
+
+.status-badge.closed {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.petition-card h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: #0d3b2e;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.petition-card .description {
+  font-size: 13.5px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Metadata Row */
+.meta-info-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 12px;
+  background-color: #F7F4EC;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 18px;
+  border: 1px solid #e4dfd1;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-icon {
+  font-size: 14px;
+}
+
+/* Progress Meter */
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #F7F4EC;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e4dfd1;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #B8892B;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.progress-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: #767066;
+}
+
+/* Quick Actions Buttons */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.quick-btn {
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-btn.approve {
+  background-color: #dcfce7;
+  color: #15803d;
+  border-color: rgba(21, 128, 61, 0.2);
+}
+
+.quick-btn.approve:hover, .quick-btn.approve.active-btn {
+  background-color: #15803d;
+  color: white;
+}
+
+.quick-btn.review {
+  background-color: #fef3c7;
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.2);
+}
+
+.quick-btn.review:hover, .quick-btn.review.active-btn {
+  background-color: #b45309;
+  color: white;
+}
+
+.quick-btn.resolve {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-color: rgba(30, 64, 175, 0.2);
+}
+
+.quick-btn.resolve:hover, .quick-btn.resolve.active-btn {
+  background-color: #1e40af;
+  color: white;
+}
+
+.quick-btn.reject {
+  background-color: #fbede9;
+  color: #a63d2f;
+  border-color: rgba(166, 61, 47, 0.2);
+}
+
+.quick-btn.reject:hover, .quick-btn.reject.active-btn {
+  background-color: #a63d2f;
+  color: white;
+}
+
+/* Admin Panel */
+.action-panel {
+  background-color: #F7F4EC;
+  border: 1px solid #e4dfd1;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.action-panel h4 {
+  font-family: 'Fraunces', serif;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0d3b2e;
+  border-bottom: 1px solid #e4dfd1;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #767066;
+  text-transform: uppercase;
+}
+
+.form-group select,
+.form-group textarea {
+  border: 1px solid #e4dfd1;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background-color: #FCFBF8;
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+}
+
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #d97706;
+  background-color: white;
+}
+
+.save-review-btn {
+  height: 38px;
+  background-color: #d97706;
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13.5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
+}
+
+.save-review-btn:hover {
+  background-color: #b45309;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 12px;
+  border: 1px dashed #e4dfd1;
+  color: #6b7280;
+}
+
+@media (max-width: 480px) {
+  .petitions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Loader Container and Spinner */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #F7F4EC;
+  border-top-color: #d97706;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
