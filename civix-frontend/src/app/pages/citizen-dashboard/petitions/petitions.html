@@ -1,0 +1,175 @@
+<div class="petitions-header">
+  <div>
+    <h2>Community Petitions</h2>
+    <p>Discover and support local initiatives, or create your own to drive action.</p>
+  </div>
+  <button class="create-btn" (click)="openModal()">
+    <span>+</span> Create Petition
+  </button>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Filters Bar -->
+<div class="filters-bar">
+  <div class="filter-group">
+    <label for="categoryFilter">Category</label>
+    <select id="categoryFilter" [(ngModel)]="selectedCategory" (change)="applyFilters()">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group search">
+    <label for="locationFilter">Search Location</label>
+    <input
+      id="locationFilter"
+      type="text"
+      [(ngModel)]="selectedLocation"
+      (input)="applyFilters()"
+      placeholder="e.g. Delhi, Sector 15">
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Syncing petition directory...</p>
+</div>
+
+<ng-template #content>
+  <!-- Petitions Grid -->
+  <div class="petitions-grid" *ngIf="filteredPetitions.length > 0; else noPetitions">
+    <div class="petition-card" *ngFor="let petition of filteredPetitions" [class.closed]="petition.status === 'CLOSED'">
+      <div class="card-top">
+        <span class="category-tag">{{ petition.category }}</span>
+        <span class="status-badge" [class.active]="petition.status === 'ACTIVE'" [class.closed-badge]="petition.status === 'CLOSED' || petition.status === 'RESOLVED'">
+          {{ petition.status.replace('_', ' ') }}
+        </span>
+      </div>
+      
+      <h3>{{ petition.title }}</h3>
+      <p class="description">{{ petition.description }}</p>
+      
+      <div class="meta-row">
+        <span class="location-badge">📍 {{ petition.location || 'Unknown Location' }}</span>
+      </div>
+
+      <!-- Progress Meter -->
+      <div class="progress-section">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="petition.targetSignatures > 0 ? (petition.currentSignatures / petition.targetSignatures) * 100 : 0">
+          </div>
+        </div>
+        <div class="progress-stats">
+          <span><strong>{{ petition.currentSignatures | number }}</strong> signed</span>
+          <span>Goal: {{ petition.targetSignatures | number }}</span>
+        </div>
+      </div>
+
+      <!-- Official Response Box -->
+      <div class="official-response-box" *ngIf="petition.officialResponse">
+        <span class="response-title">Official Response</span>
+        <p class="response-text">{{ petition.officialResponse }}</p>
+      </div>
+
+      <div class="card-footer">
+        <button 
+          class="sign-btn" 
+          [disabled]="petition.signedByMe || petition.status === 'CLOSED' || petition.status === 'RESOLVED'"
+          (click)="signPetition(petition)">
+          {{ petition.signedByMe ? '✍️ Signed' : (petition.status === 'CLOSED' || petition.status === 'RESOLVED') ? '🔒 Closed' : 'Sign Petition' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noPetitions>
+    <div class="empty-state">
+      <p>No petitions match your current filters. Be the first to draft one!</p>
+    </div>
+  </ng-template>
+</ng-template>
+
+<!-- Create Petition Modal -->
+<div class="modal-overlay" *ngIf="showCreateModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Draft a New Petition</h3>
+      <button class="close-modal-btn" (click)="closeModal()">&times;</button>
+    </div>
+    
+    <div class="alert error" *ngIf="errorMessage" style="margin: 1rem 0;">
+      {{ errorMessage }}
+    </div>
+    
+    <form (ngSubmit)="onCreatePetition()" novalidate>
+      <div class="form-group">
+        <label for="title">Title <span class="required">*</span></label>
+        <input 
+          id="title" 
+          type="text" 
+          [(ngModel)]="newTitle" 
+          name="title" 
+          placeholder="e.g. Repair Main Market Road" 
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Detailed Description <span class="required">*</span></label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="newDescription" 
+          name="description" 
+          rows="4" 
+          placeholder="Explain the issue, the impact, and your proposed solution..."
+          required></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" [(ngModel)]="newCategory" name="category">
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location <span class="required">*</span></label>
+          <input 
+            id="location" 
+            type="text" 
+            [(ngModel)]="newLocation" 
+            name="location" 
+            placeholder="e.g. Sector 15, Rohini" 
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="targetSignatures">Target Signatures</label>
+        <input 
+          id="targetSignatures" 
+          type="number" 
+          [(ngModel)]="newTargetSignatures" 
+          name="targetSignatures" 
+          min="10">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Submitting...' : 'Submit Petition' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

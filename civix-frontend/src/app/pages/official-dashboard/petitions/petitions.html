@@ -1,0 +1,160 @@
+<div class="petitions-header">
+  <div>
+    <h2>Petitions Management</h2>
+    <p>Review, moderate, and update status for community petitions across your jurisdiction.</p>
+  </div>
+  <button class="refresh-btn" (click)="fetchPetitions()">
+    <span>🔄</span> Refresh Directory
+  </button>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Filters & Search Bar -->
+<div class="filters-bar">
+  <div class="filter-group search">
+    <label for="searchLocation">Location Search</label>
+    <input 
+      id="searchLocation" 
+      type="text" 
+      [(ngModel)]="searchLocation" 
+      (input)="applyFilters()" 
+      placeholder="e.g. Delhi, Sector 15...">
+  </div>
+
+  <div class="filter-group">
+    <label for="categoryFilter">Category</label>
+    <select id="categoryFilter" [(ngModel)]="selectedCategory" (change)="applyFilters()">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label for="statusFilter">Status</label>
+    <select id="statusFilter" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+      <option value="">All Statuses</option>
+      <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt.replace('_', ' ') }}</option>
+    </select>
+  </div>
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading community petitions register...</p>
+</div>
+
+<ng-template #content>
+  <!-- Petitions Grid -->
+  <div class="petitions-grid" *ngIf="filteredPetitions.length > 0; else noPetitions">
+    <div class="petition-card" *ngFor="let petition of filteredPetitions" [class.resolved]="petition.status === 'RESOLVED'">
+      <div class="card-top">
+        <span class="category-tag">{{ petition.category }}</span>
+        <span class="status-badge" [class]="petition.status.toLowerCase()">
+          {{ petition.status.replace('_', ' ') }}
+        </span>
+      </div>
+
+      <h3>{{ petition.title }}</h3>
+      <p class="description">{{ petition.description }}</p>
+
+      <!-- Metadata Row: Creator, Location, Created Date -->
+      <div class="meta-info-grid">
+        <div class="meta-item">
+          <span class="meta-icon">👤</span>
+          <span>By: <strong>{{ petition.creatorName }}</strong></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-icon">📍</span>
+          <span>{{ petition.location }}</span>
+        </div>
+        <div class="meta-item" *ngIf="petition.createdAt">
+          <span class="meta-icon">📅</span>
+          <span>{{ petition.createdAt | date:'mediumDate' }}</span>
+        </div>
+      </div>
+
+      <!-- Signatures Progress Meter -->
+      <div class="progress-section">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="(petition.currentSignatures / petition.targetSignatures) * 100">
+          </div>
+        </div>
+        <div class="progress-stats">
+          <span><strong>{{ petition.currentSignatures | number }}</strong> signed</span>
+          <span>Target Goal: {{ petition.targetSignatures | number }}</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <button 
+          class="quick-btn approve" 
+          [class.active-btn]="petition.status === 'APPROVED'"
+          (click)="quickUpdateStatus(petition, 'APPROVED')">
+          ✓ Approve
+        </button>
+        <button 
+          class="quick-btn review" 
+          [class.active-btn]="petition.status === 'UNDER_REVIEW'"
+          (click)="quickUpdateStatus(petition, 'UNDER_REVIEW')">
+          ⏳ Under Review
+        </button>
+        <button 
+          class="quick-btn resolve" 
+          [class.active-btn]="petition.status === 'RESOLVED'"
+          (click)="quickUpdateStatus(petition, 'RESOLVED')">
+          🎯 Resolve
+        </button>
+        <button 
+          class="quick-btn reject" 
+          [class.active-btn]="petition.status === 'REJECTED'"
+          (click)="quickUpdateStatus(petition, 'REJECTED')">
+          ✕ Reject
+        </button>
+      </div>
+
+      <!-- Administrative Action Panel -->
+      <div class="action-panel">
+        <h4>Administrative Review & Response</h4>
+        
+        <div class="form-group">
+          <label [for]="'status-' + petition.id">Set Status</label>
+          <select [id]="'status-' + petition.id" [(ngModel)]="petition.status">
+            <option *ngFor="let opt of statusOptions" [value]="opt">
+              {{ opt.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label [for]="'comment-' + petition.id">Official Response / Comment</label>
+          <textarea
+            [id]="'comment-' + petition.id"
+            [(ngModel)]="petition.officialResponse"
+            rows="3"
+            placeholder="Provide official feedback or municipal updates..."></textarea>
+        </div>
+
+        <button class="save-review-btn" (click)="updatePetitionStatus(petition)" [disabled]="submittingMap[petition.id]">
+          {{ submittingMap[petition.id] ? 'Saving...' : '💾 Save Response & Status' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noPetitions>
+    <div class="empty-state">
+      <p>No community petitions found matching your search or filters.</p>
+    </div>
+  </ng-template>
+</ng-template>

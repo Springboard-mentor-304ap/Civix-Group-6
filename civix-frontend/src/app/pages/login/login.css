@@ -1,0 +1,622 @@
+/* ===========================
+   CIVIX LOGIN — token system
+   Ink green + ballot gold, warm paper ground.
+   Signature: perforated ballot-stub divider.
+=========================== */
+
+.login-container,
+.login-container *,
+.login-container *::before,
+.login-container *::after {
+    box-sizing: border-box;
+}
+
+.login-container{
+    --ink:#0B3D2E;
+    --ink-deep:#082B21;
+    --moss:#2F6F4F;
+    --paper:#F7F4EC;
+    --paper-line:#E4DFD1;
+    --gold:#B8892B;
+    --gold-soft:#E7D5A6;
+    --charcoal:#232120;
+    --clay:#A63D2F;
+    --clay-bg:#FBEDE9;
+
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1.05fr 480px;
+    background:var(--paper);
+    font-family:'Public Sans', -apple-system, sans-serif;
+}
+
+/* ===========================
+   LEFT PANEL
+=========================== */
+
+.left-panel{
+    background:
+        radial-gradient(circle at 15% 10%, rgba(184,137,43,.10), transparent 40%),
+        linear-gradient(160deg,var(--ink-deep),var(--ink) 60%,var(--moss));
+    color:var(--paper);
+    padding:64px 72px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+}
+
+/* faint paper-grain seal ring, not a blob */
+.left-panel::before{
+    content:"";
+    position:absolute;
+    width:620px;
+    height:620px;
+    border:1px solid rgba(231,213,166,.18);
+    border-radius:50%;
+    top:-220px;
+    right:-200px;
+}
+.left-panel::after{
+    content:"";
+    position:absolute;
+    width:460px;
+    height:460px;
+    border:1px solid rgba(231,213,166,.10);
+    border-radius:50%;
+    top:-140px;
+    right:-120px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:64px;
+    position:relative;
+    z-index:2;
+}
+
+.seal{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:2px solid var(--gold-soft);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    flex-shrink:0;
+}
+.seal::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(231,213,166,.5);
+    border-radius:50%;
+}
+.seal span{
+    font-family:'Fraunces', serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--gold-soft);
+}
+
+.brand h2{
+    font-family:'Fraunces', serif;
+    font-size:30px;
+    font-weight:600;
+    letter-spacing:.5px;
+}
+
+.brand small{
+    display:block;
+    opacity:.75;
+    font-size:13px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    margin-top:2px;
+}
+
+.hero{
+    position:relative;
+    z-index:2;
+}
+
+.hero h1{
+    font-family:'Fraunces', serif;
+    font-size:52px;
+    line-height:1.12;
+    margin-bottom:18px;
+    font-weight:600;
+}
+
+.hero p{
+    font-size:17px;
+    line-height:1.75;
+    opacity:.88;
+    max-width:520px;
+    font-weight:300;
+}
+
+/* ===========================
+FEATURES — a civic ledger, not cards floating in space
+=========================== */
+
+.feature-list{
+    margin-top:48px;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+    z-index:2;
+}
+
+.feature-row{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:16px 4px;
+    border-top:1px solid rgba(247,244,236,.14);
+    transition:padding-left .25s ease;
+}
+.feature-row:last-child{
+    border-bottom:1px solid rgba(247,244,236,.14);
+}
+.feature-row:hover{
+    padding-left:12px;
+}
+
+.feature-mark{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--gold-soft);
+    width:28px;
+    flex-shrink:0;
+}
+
+.feature-row h4{
+    font-size:16px;
+    font-weight:600;
+    margin-bottom:2px;
+}
+
+.feature-row small{
+    opacity:.72;
+    font-size:13.5px;
+    font-weight:300;
+}
+
+/* ===========================
+RIGHT PANEL
+=========================== */
+
+.right-panel{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+    position:relative;
+    background:var(--paper);
+}
+
+/* the ballot-stub perforation — the signature element,
+   sits on the seam between the two panels */
+.right-panel::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    bottom:0;
+    width:1px;
+    background-image:radial-gradient(circle, var(--paper) 3px, transparent 3.5px);
+    background-size:100% 26px;
+    background-repeat:repeat-y;
+    background-position:left center;
+    box-shadow:-1px 0 0 rgba(0,0,0,.06);
+}
+
+.login-card{
+    width:100%;
+    max-width:420px;
+    background:#fff;
+    border-radius:4px;
+    padding:48px 44px;
+    border:1px solid var(--paper-line);
+    box-shadow:0 24px 60px rgba(11,61,46,.10);
+    position:relative;
+    animation:rise .5s cubic-bezier(.2,.8,.3,1);
+}
+
+@keyframes rise{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+.login-card .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:10px;
+    text-align:center;
+}
+
+.login-card h2{
+    font-family:'Fraunces', serif;
+    text-align:center;
+    font-size:32px;
+    font-weight:600;
+    margin-bottom:6px;
+    color:var(--ink);
+}
+
+.subtitle{
+    text-align:center;
+    color:#767066;
+    margin-bottom:32px;
+    font-size:14.5px;
+}
+
+/* ===========================
+INPUTS
+=========================== */
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    font-weight:600;
+    margin-bottom:7px;
+    color:var(--charcoal);
+    font-size:13.5px;
+}
+
+.input-group input{
+    width:100%;
+    height:50px;
+    border:1px solid var(--paper-line);
+    border-radius:4px;
+    padding:0 15px;
+    font-size:15px;
+    font-family:inherit;
+    background:#FCFBF8;
+    transition:border-color .2s, box-shadow .2s, background .2s;
+}
+
+.input-group input::placeholder{
+    color:#B7B0A2;
+}
+
+.input-group input:focus{
+    outline:none;
+    border-color:var(--ink);
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(11,61,46,.09);
+}
+
+.input-group input.invalid{
+    border-color:var(--clay);
+    background:var(--clay-bg);
+}
+
+/* ===========================
+PASSWORD
+=========================== */
+
+.password-wrapper{
+    position:relative;
+}
+
+.password-wrapper input{
+    padding-right:52px;
+}
+
+.eye-btn{
+    position:absolute;
+    right:6px;
+    top:50%;
+    transform:translateY(-50%);
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:18px;
+    width:38px;
+    height:38px;
+    border-radius:4px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#8a8378;
+    transition:background .2s;
+}
+.eye-btn:hover{
+    background:var(--paper-line);
+}
+
+/* ===========================
+OPTIONS
+=========================== */
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:26px;
+    font-size:13.5px;
+}
+
+.options label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color:#54504a;
+    cursor:pointer;
+}
+
+.options input[type="checkbox"]{
+    accent-color:var(--ink);
+    width:15px;
+    height:15px;
+}
+
+.options a{
+    color:var(--ink);
+    font-weight:600;
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+    transition:border-color .2s;
+}
+
+.options a:hover{
+    border-color:var(--ink);
+}
+
+/* ===========================
+BUTTON
+=========================== */
+
+.login-btn{
+    width:100%;
+    height:52px;
+    border:none;
+    border-radius:4px;
+    background:var(--ink);
+    color:var(--paper);
+    font-size:15.5px;
+    font-weight:600;
+    letter-spacing:.02em;
+    cursor:pointer;
+    transition:background .2s, transform .15s;
+    position:relative;
+}
+
+.login-btn:hover:not(:disabled){
+    background:var(--ink-deep);
+    transform:translateY(-1px);
+}
+
+.login-btn:active:not(:disabled){
+    transform:translateY(0);
+}
+
+.login-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+/* ===========================
+REGISTER
+=========================== */
+
+.register-link{
+    margin-top:26px;
+    text-align:center;
+    font-size:14.5px;
+    color:#767066;
+}
+
+.register-link a{
+    color:var(--ink);
+    font-weight:700;
+    text-decoration:none;
+    border-bottom:1px solid var(--gold);
+}
+
+.register-link a:hover{
+    color:var(--gold);
+}
+
+/* ===========================
+ALERT — an official notice, not a rounded toast
+=========================== */
+
+.alert{
+    padding:13px 16px;
+    border-left:3px solid var(--clay);
+    background:var(--clay-bg);
+    color:#7A2E22;
+    margin-bottom:20px;
+    font-size:13.5px;
+    font-weight:500;
+    border-radius:2px;
+    animation:shake .35s ease;
+}
+
+@keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-4px); }
+    40%{ transform:translateX(4px); }
+    60%{ transform:translateX(-3px); }
+    80%{ transform:translateX(3px); }
+}
+
+/* ===========================
+   ROLE SELECTOR (TABS)
+   =========================== */
+
+.role-selector {
+    display: flex;
+    background: #FCFBF8;
+    border: 1px solid var(--paper-line);
+    border-radius: 4px;
+    padding: 4px;
+    margin-bottom: 24px;
+}
+
+.role-tab {
+    flex: 1;
+    height: 40px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--charcoal);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.role-tab:hover {
+    color: var(--ink);
+}
+
+.role-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+    box-shadow: 0 4px 10px rgba(11,61,46,.15);
+}
+
+/* ===========================
+RESPONSIVE
+=========================== */
+
+@media(max-width:1100px){
+    .login-container{ grid-template-columns:1fr; }
+    .left-panel{ display:none; }
+    .right-panel{ padding:30px 18px; }
+    .right-panel::before{ display:none; }
+    .login-card{ max-width:100%; }
+}
+
+@media(max-width:600px){
+    .login-card{ padding:32px 24px; }
+    .login-card h2{ font-size:27px; }
+    .options{ flex-direction:column; align-items:flex-start; gap:12px; }
+}
+
+/* ==========================================================================
+   ROLE MISMATCH ERROR POPUP MODAL
+   ========================================================================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(8, 43, 33, 0.55);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-card.role-error-card {
+    background: white;
+    width: 100%;
+    max-width: 350px;
+    border-radius: 12px;
+    padding: 24px 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--paper-line);
+    animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #8a8378;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-modal-btn:hover {
+    color: var(--ink);
+}
+
+.role-warning-icon-badge {
+    width: 44px;
+    height: 44px;
+    background-color: var(--clay-bg);
+    border: 1.5px solid rgba(166, 61, 47, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px auto;
+    font-size: 22px;
+}
+
+.role-error-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--clay);
+    margin-bottom: 8px;
+}
+
+.role-modal-message {
+    font-size: 13.5px;
+    color: var(--charcoal);
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.btn-primary-action {
+    width: 100%;
+    height: 42px;
+    background-color: #0d3b2e;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(13, 59, 46, 0.25);
+}
+
+.btn-primary-action:hover {
+    background-color: #082b21;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(13, 59, 46, 0.35);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}

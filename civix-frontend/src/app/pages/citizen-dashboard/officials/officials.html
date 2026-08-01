@@ -1,0 +1,156 @@
+<div class="officials-header">
+  <h2>Local Public Officials</h2>
+  <p>Find and connect directly with verified public representatives of your municipal constituency.</p>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Search Input -->
+<div class="search-bar">
+  <input 
+    type="text" 
+    [(ngModel)]="searchText" 
+    (input)="applyFilter()" 
+    placeholder="Search by name, city, or state...">
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading constituency directories...</p>
+</div>
+
+<ng-template #content>
+  <!-- Officials Grid -->
+  <div class="officials-grid" *ngIf="filteredOfficials.length > 0; else noOfficials">
+    <div class="official-card" *ngFor="let official of filteredOfficials">
+      <div class="card-header">
+        <div class="avatar-official">🏛️</div>
+        <div>
+          <h4>{{ official.name }}</h4>
+          <span class="badge official-badge">Official Representative</span>
+        </div>
+      </div>
+
+      <div class="card-details">
+        <div class="detail-item">
+          <span class="icon">✉️</span> 
+          <a [href]="'mailto:' + official.email">{{ official.email }}</a>
+        </div>
+        <div class="detail-item">
+          <span class="icon">📍</span> 
+          <span>{{ official.city || 'Delhi' }}, {{ official.state || 'Delhi' }}</span>
+        </div>
+      </div>
+
+      <button class="message-btn" (click)="openMessageModal(official)">
+        💬 Send Message
+      </button>
+    </div>
+  </div>
+
+  <ng-template #noOfficials>
+    <div class="empty-state">
+      <p>No verified officials found matching your search.</p>
+    </div>
+  </ng-template>
+
+  <!-- My Sent Messages & Official Responses Section -->
+  <div class="my-queries-section" style="margin-top: 48px;" *ngIf="myQueries.length > 0">
+    <h3 style="font-family: 'Fraunces', serif; color: #0B3D2E; font-size: 22px; margin-bottom: 16px;">
+      📬 My Sent Messages & Officer Responses
+    </h3>
+    <div class="queries-grid" style="display: flex; flex-direction: column; gap: 16px;">
+      <div class="query-card-item" *ngFor="let q of myQueries" style="background: white; border-radius: 12px; padding: 20px; border: 1px solid #E4DFD1; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <strong style="color: #0B3D2E; font-size: 16px;">To: {{ q.officialName || 'Public Official' }}</strong>
+            <span style="font-size: 12px; color: #767066; margin-left: 8px;">({{ q.submittedAt | date:'mediumDate' }})</span>
+          </div>
+          <span class="badge" [style.background]="q.status === 'RESOLVED' ? '#E8F5E9' : '#FFF8E1'" [style.color]="q.status === 'RESOLVED' ? '#2E7D32' : '#F57F17'" style="padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 12px;">
+            {{ q.status === 'RESOLVED' ? '✅ Official Response Received' : '⏳ Awaiting Officer Response' }}
+          </span>
+        </div>
+
+        <p style="color: #232120; font-size: 14.5px; line-height: 1.5; margin-bottom: 12px;">
+          <strong>Your Message:</strong> {{ q.message }}
+        </p>
+
+        <!-- Official Reply Box -->
+        <div *ngIf="q.reply" style="background-color: #FAF8F5; border-left: 4px solid #0B3D2E; padding: 14px 18px; border-radius: 8px; margin-top: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <span>🏛️</span>
+            <strong style="color: #0B3D2E; font-size: 14px;">Official Representative Response:</strong>
+          </div>
+          <p style="color: #082B21; font-size: 14px; line-height: 1.5; margin: 0; font-weight: 500;">
+            {{ q.reply }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+<!-- Send Message Modal -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Message to {{ selectedOfficial?.name }}</h3>
+      <button class="close-modal-btn" (click)="closeMessageModal()">&times;</button>
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage" style="margin: 1rem 0;">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="sendMessage()" novalidate>
+      <p class="modal-instruction">
+        Draft your query or grievance clearly. Your registered citizen email will be shared automatically.
+      </p>
+
+      <div class="form-group">
+        <label for="subjectTitle">Subject / Heading <span class="required">*</span></label>
+        <input 
+          id="subjectTitle" 
+          type="text" 
+          [(ngModel)]="subjectTitle" 
+          name="subjectTitle" 
+          placeholder="e.g. Streetlight Repairs on Sector 15 Main Road" 
+          required>
+      </div>
+
+      <div class="form-group">
+        <label for="messageText">Message Description <span class="required">*</span></label>
+        <textarea 
+          id="messageText" 
+          [(ngModel)]="messageText" 
+          name="messageText" 
+          rows="4" 
+          placeholder="Explain your community query or grievance in detail..."
+          required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Priority Level</label>
+        <select id="priority" [(ngModel)]="priorityValue" name="priorityValue">
+          <option value="NORMAL">Normal Priority</option>
+          <option value="URGENT">Urgent Priority</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeMessageModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Sending...' : 'Submit Message' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

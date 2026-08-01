@@ -1,0 +1,79 @@
+<div class="queries-header">
+  <h2>Citizen Queries</h2>
+  <p>Review messages, complaints, and requests submitted by constituency citizens, and reply directly.</p>
+</div>
+
+<!-- Alert messages -->
+<div class="alert success" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading state -->
+<div class="loader-container" *ngIf="loading; else content">
+  <div class="spinner"></div>
+  <p>Loading citizen grievance queue...</p>
+</div>
+
+<ng-template #content>
+  <!-- Queries List -->
+  <div class="queries-list" *ngIf="queries.length > 0; else noQueries">
+    <div class="query-card" *ngFor="let query of queries" [class.resolved]="query.status === 'RESOLVED'">
+      <div class="card-top">
+        <div class="citizen-info">
+          <strong>👤 {{ query.citizenName }}</strong>
+          <a [href]="'mailto:' + query.citizenEmail" class="email-link">({{ query.citizenEmail }})</a>
+        </div>
+        
+        <div class="badges-row">
+          <!-- Priority badge -->
+          <span class="badge priority" [class.urgent]="query.priority === 'URGENT'" [class.normal]="query.priority === 'NORMAL'">
+            {{ query.priority }}
+          </span>
+          <!-- Status badge -->
+          <span class="badge status" [class.pending]="query.status === 'PENDING'" [class.resolved-badge]="query.status === 'RESOLVED'">
+            {{ query.status }}
+          </span>
+        </div>
+      </div>
+  
+      <!-- Citizen Message -->
+      <div class="message-body">
+        <p>{{ query.message }}</p>
+        <span class="timestamp">Submitted on: {{ query.submittedAt | date:'medium' }}</span>
+      </div>
+  
+      <!-- Reply Section -->
+      <div class="reply-section">
+        <div class="resolved-view" *ngIf="query.status === 'RESOLVED'; else replyForm">
+          <h5>Official Response Sent:</h5>
+          <p class="reply-text">{{ query.replyText }}</p>
+          <button class="reopen-btn" (click)="toggleQueryStatus(query)" [disabled]="submittingMap[query.id]">
+            🔄 Reopen Query
+          </button>
+        </div>
+  
+        <ng-template #replyForm>
+          <h5>Draft Response:</h5>
+          <div class="form-group">
+            <textarea 
+              [(ngModel)]="query.replyText" 
+              rows="3" 
+              placeholder="Type your official reply here. Submitting will resolve the query..."></textarea>
+          </div>
+          <button class="send-reply-btn" (click)="submitReply(query)" [disabled]="submittingMap[query.id]">
+            {{ submittingMap[query.id] ? 'Sending...' : '📤 Send Reply & Resolve' }}
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #noQueries>
+    <div class="empty-state">
+      <p>No citizen queries or grievances found in your queue.</p>
+    </div>
+  </ng-template>
+</ng-template>
