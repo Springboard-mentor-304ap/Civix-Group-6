@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, finalize } from 'rxjs';
 
 interface Official {
   id: number;
@@ -22,6 +22,7 @@ interface Official {
 })
 export class CitizenOfficialsComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   officials: Official[] = [];
   filteredOfficials: Official[] = [];
@@ -46,17 +47,24 @@ export class CitizenOfficialsComponent implements OnInit {
   fetchOfficials() {
     this.errorMessage = '';
     this.loading = true;
-    this.http.get<Official[]>('http://localhost:8080/api/users?role=OFFICIAL').subscribe({
-      next: (data) => {
-        this.officials = data || [];
-        this.applyFilter();
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load verified public officials.';
-        this.loading = false;
-      }
-    });
+    this.http.get<Official[]>('http://localhost:8080/api/users?role=OFFICIAL')
+      .pipe(
+        catchError(() => of([])),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.officials = data || [];
+          this.applyFilter();
+        },
+        error: () => {
+          this.officials = [];
+          this.errorMessage = 'Failed to load officials.';
+        }
+      });
   }
 
   applyFilter() {

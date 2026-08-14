@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, finalize } from 'rxjs';
 
 interface CitizenQuery {
   id: number;
@@ -24,6 +24,7 @@ interface CitizenQuery {
 })
 export class OfficialQueriesComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   queries: CitizenQuery[] = [];
 
@@ -37,33 +38,37 @@ export class OfficialQueriesComponent implements OnInit {
   }
 
   fetchQueries() {
-    const userId = localStorage.getItem('id');
-    if (!userId) {
-      this.errorMessage = 'Session expired. Please log in again.';
-      return;
-    }
+    const userId = localStorage.getItem('id') || localStorage.getItem('userId') || '0';
 
     this.errorMessage = '';
     this.loading = true;
-    this.http.get<any[]>(`http://localhost:8080/api/queries?officialId=${userId}`).subscribe({
-      next: (data) => {
-        this.queries = data.map(q => ({
-          id: q.id,
-          citizenName: q.citizenName || 'Verified Citizen',
-          citizenEmail: q.citizenEmail || 'citizen@email.com',
-          message: q.message,
-          status: q.status || 'PENDING',
-          priority: q.priority || 'NORMAL',
-          replyText: q.reply || '', // mapped from backend QueryResponse.reply
-          submittedAt: q.submittedAt || new Date().toISOString()
-        }));
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load citizen query tickets.';
-        this.loading = false;
-      }
-    });
+    this.http.get<any[]>(`http://localhost:8080/api/queries?officialId=${userId}`)
+      .pipe(
+        catchError(() => of([])),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          const rawList = data || [];
+          this.queries = rawList.map(q => ({
+            id: q.id,
+            citizenName: q.citizenName || 'Verified Citizen',
+            citizenEmail: q.citizenEmail || 'citizen@email.com',
+            message: q.message,
+            status: q.status || 'PENDING',
+            priority: q.priority || 'NORMAL',
+            replyText: q.reply || '',
+            submittedAt: q.submittedAt || new Date().toISOString()
+          }));
+        },
+        error: () => {
+          this.queries = [];
+          this.errorMessage = 'Failed to load citizen queries.';
+        }
+      });
   }
 
   submitReply(query: CitizenQuery) {

@@ -1,11 +1,9 @@
 <div class="petitions-header">
   <div>
     <h2>Community Petitions</h2>
-    <p>Discover and support local initiatives, or create your own to drive action.</p>
+    <p>Discover, support, and create civic initiatives for local community improvements.</p>
   </div>
-  <button class="create-btn" (click)="openModal()">
-    <span>+</span> Create Petition
-  </button>
+  <button class="btn-create-petition" (click)="openModal()">+ Draft New Petition</button>
 </div>
 
 <!-- Alert messages -->
@@ -16,81 +14,203 @@
   {{ errorMessage }}
 </div>
 
-<!-- Filters Bar -->
-<div class="filters-bar">
-  <div class="filter-group">
-    <label for="categoryFilter">Category</label>
-    <select id="categoryFilter" [(ngModel)]="selectedCategory" (change)="applyFilters()">
-      <option value="">All Categories</option>
-      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
-    </select>
+<!-- Tabs Bar -->
+<div class="petitions-tabs-bar">
+  <button class="tab-btn" [class.active]="activeTab === 'ALL'" (click)="setTab('ALL')">
+    All Petitions
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'MY'" (click)="setTab('MY')">
+    My Petitions
+  </button>
+  <button class="tab-btn" [class.active]="activeTab === 'SIGNED'" (click)="setTab('SIGNED')">
+    Signed by Me
+  </button>
+</div>
+
+<!-- Search & Filter Controls -->
+<div class="filter-controls-card">
+  <div class="search-input-box">
+    <span class="search-icon">🔍</span>
+    <input 
+      type="text" 
+      [(ngModel)]="searchText" 
+      (input)="applyFilters()" 
+      placeholder="Search petitions by title or keyword...">
   </div>
 
-  <div class="filter-group search">
-    <label for="locationFilter">Search Location</label>
-    <input
-      id="locationFilter"
-      type="text"
-      [(ngModel)]="selectedLocation"
-      (input)="applyFilters()"
-      placeholder="e.g. Delhi, Sector 15">
+  <div class="filter-dropdowns">
+    <div class="filter-group">
+      <label>Category:</label>
+      <select [(ngModel)]="selectedCategory" (change)="applyFilters()">
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option *ngFor="let st of statuses" [value]="st">{{ st }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Location:</label>
+      <select [(ngModel)]="selectedLocation" (change)="applyFilters()">
+        <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Sort By:</label>
+      <select [(ngModel)]="selectedSort" (change)="applyFilters()">
+        <option value="RECENT">Most Recent</option>
+        <option value="MOST_SIGNED">Most Signed</option>
+        <option value="PROGRESS">Highest Progress</option>
+      </select>
+    </div>
   </div>
 </div>
 
-<!-- Loading state -->
-<div class="loader-container" *ngIf="loading; else content">
+<!-- Loading State Spinner -->
+<div class="loader-container" *ngIf="loading; else mainContent">
   <div class="spinner"></div>
-  <p>Syncing petition directory...</p>
+  <p>Loading community petitions...</p>
 </div>
 
-<ng-template #content>
-  <!-- Petitions Grid -->
-  <div class="petitions-grid" *ngIf="filteredPetitions.length > 0; else noPetitions">
-    <div class="petition-card" *ngFor="let petition of filteredPetitions" [class.closed]="petition.status === 'CLOSED'">
-      <div class="card-top">
-        <span class="category-tag">{{ petition.category }}</span>
-        <span class="status-badge" [class.active]="petition.status === 'ACTIVE'" [class.closed-badge]="petition.status === 'CLOSED' || petition.status === 'RESOLVED'">
-          {{ petition.status.replace('_', ' ') }}
-        </span>
-      </div>
-      
-      <h3>{{ petition.title }}</h3>
-      <p class="description">{{ petition.description }}</p>
-      
-      <div class="meta-row">
-        <span class="location-badge">📍 {{ petition.location || 'Unknown Location' }}</span>
+<ng-template #mainContent>
+  <!-- Petitions List Grid -->
+  <div class="petitions-grid" *ngIf="paginatedPetitions.length > 0; else emptyPetitions">
+    <div class="petition-card" *ngFor="let petition of paginatedPetitions">
+      <!-- Top Badges Row -->
+      <div class="card-badges">
+        <span class="badge category-badge">{{ petition.category || 'General' }}</span>
+        <span class="badge location-badge">📍 {{ petition.location || 'Local' }}</span>
       </div>
 
-      <!-- Progress Meter -->
+      <!-- Title & Description -->
+      <h3 class="petition-title">{{ petition.title }}</h3>
+      <p class="petition-desc">{{ petition.description }}</p>
+
+      <!-- Official Response Box if present -->
+      <div class="official-response-box" *ngIf="petition.officialResponse">
+        <strong>🏛️ Official Response:</strong>
+        <p>{{ petition.officialResponse }}</p>
+      </div>
+
+      <!-- Thin Progress Meter & Signature Counts -->
       <div class="progress-section">
         <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            [style.width.%]="petition.targetSignatures > 0 ? (petition.currentSignatures / petition.targetSignatures) * 100 : 0">
-          </div>
+          <div class="progress-fill" [style.width.%]="getProgressPercent(petition)"></div>
         </div>
         <div class="progress-stats">
-          <span><strong>{{ petition.currentSignatures | number }}</strong> signed</span>
-          <span>Goal: {{ petition.targetSignatures | number }}</span>
+          <span class="current-sig"><strong>{{ (petition.currentSignatures || 0) | number }}</strong> Signatures</span>
+          <span class="goal-sig">Goal: {{ (petition.targetSignatures || 100) | number }}</span>
         </div>
       </div>
 
+      <!-- Bottom Footer Row -->
       <div class="card-footer">
+        <div class="footer-left">
+          <span class="status-badge" [class.active]="petition.status === 'ACTIVE'">{{ petition.status.replace('_', ' ') }}</span>
+          <button class="btn-card-timeline" (click)="openTimelineModal(petition)" title="View Timeline & Responses">
+            🕒 History
+          </button>
+          
+          <!-- Owner Secondary Actions: Edit & Delete -->
+          <div class="owner-actions" *ngIf="isOwner(petition)">
+            <button class="btn-owner-action edit" (click)="openEditModal(petition)" title="Edit Petition">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              <span>Edit</span>
+            </button>
+            <button class="btn-owner-action delete" (click)="onDeletePetition(petition)" title="Delete Petition">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+
         <button 
-          class="sign-btn" 
-          [disabled]="petition.signedByMe || petition.status === 'CLOSED' || petition.status === 'RESOLVED'"
+          class="btn-sign" 
+          *ngIf="!petition.signedByMe && petition.status === 'ACTIVE'"
           (click)="signPetition(petition)">
-          {{ petition.signedByMe ? '✍️ Signed' : (petition.status === 'CLOSED' || petition.status === 'RESOLVED') ? '🔒 Closed' : 'Sign Petition' }}
+          Sign Petition
         </button>
+
+        <span class="signed-badge" *ngIf="petition.signedByMe">
+          ✓ Signed
+        </span>
       </div>
     </div>
   </div>
 
-  <ng-template #noPetitions>
-    <div class="empty-state">
-      <p>No petitions match your current filters. Be the first to draft one!</p>
+  <ng-template #emptyPetitions>
+    <div class="empty-state-box">
+      <div class="empty-icon">📜</div>
+      <h3>No petitions found</h3>
+      <p>Try refining your search terms or filter selections, or launch a new initiative.</p>
+      <button class="btn-primary" (click)="openModal()">+ Draft New Petition</button>
     </div>
   </ng-template>
+
+  <!-- Status Timeline Modal -->
+  <div class="timeline-modal-backdrop" *ngIf="showTimelineModal">
+    <div class="timeline-modal-card">
+      <div class="modal-header">
+        <h2>Petition Lifecycle Timeline</h2>
+        <button class="btn-close-modal" (click)="closeTimelineModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info-text">Tracking history for petition ID: <strong>#{{ selectedTimelinePetition?.id }}</strong></p>
+        <h3 class="modal-pet-title">{{ selectedTimelinePetition?.title }}</h3>
+
+        <div class="modal-loader" *ngIf="timelineLoading">
+          <div class="spinner"></div>
+          <p>Loading timeline history...</p>
+        </div>
+
+        <div class="timeline-stepper" *ngIf="!timelineLoading">
+          <div class="timeline-step" *ngFor="let event of timelineEvents">
+            <div class="step-marker">
+              <span class="marker-dot"></span>
+              <span class="marker-line"></span>
+            </div>
+            <div class="step-content">
+              <div class="step-header">
+                <span class="step-status">{{ event.status.replace('_', ' ') }}</span>
+                <span class="step-date">{{ event.updatedAt | date:'medium' }}</span>
+              </div>
+              <div class="step-author" *ngIf="event.officialName">
+                Updated by Official: <strong>{{ event.officialName }}</strong>
+              </div>
+              <div class="step-response" *ngIf="event.response">
+                💬 "<em>{{ event.response }}</em>"
+              </div>
+            </div>
+          </div>
+          <div class="empty-timeline-state" *ngIf="timelineEvents.length === 0">
+            <p>No history entries found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-bar" *ngIf="totalPages > 1">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+      &larr; Previous
+    </button>
+    <span class="page-info">Page <strong>{{ currentPage }}</strong> of {{ totalPages }}</span>
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+      Next &rarr;
+    </button>
+  </div>
 </ng-template>
 
 <!-- Create Petition Modal -->
@@ -100,64 +220,142 @@
       <h3>Draft a New Petition</h3>
       <button class="close-modal-btn" (click)="closeModal()">&times;</button>
     </div>
-    
+
     <form (ngSubmit)="onCreatePetition()" novalidate>
       <div class="form-group">
-        <label for="title">Title <span class="required">*</span></label>
+        <label for="title">Petition Title <span class="required">*</span></label>
         <input 
-          id="title" 
           type="text" 
+          id="title" 
           [(ngModel)]="newTitle" 
-          name="title" 
-          placeholder="e.g. Repair Main Market Road" 
+          name="newTitle" 
+          placeholder="e.g. Repair Potholes on Main Street" 
           required>
-      </div>
-
-      <div class="form-group">
-        <label for="description">Detailed Description <span class="required">*</span></label>
-        <textarea 
-          id="description" 
-          [(ngModel)]="newDescription" 
-          name="description" 
-          rows="4" 
-          placeholder="Explain the issue, the impact, and your proposed solution..."
-          required></textarea>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="category">Category</label>
-          <select id="category" [(ngModel)]="newCategory" name="category">
-            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          <select id="category" [(ngModel)]="newCategory" name="newCategory">
+            <option value="Environment">Environment</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="Sanitation">Sanitation</option>
+            <option value="Safety">Safety</option>
+            <option value="Education">Education</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="location">Location <span class="required">*</span></label>
+          <label for="location">Location/District <span class="required">*</span></label>
           <input 
-            id="location" 
             type="text" 
+            id="location" 
             [(ngModel)]="newLocation" 
-            name="location" 
-            placeholder="e.g. Sector 15, Rohini" 
+            name="newLocation" 
+            placeholder="e.g. Delhi, Sector 4" 
             required>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="targetSignatures">Target Signatures</label>
+        <label for="targetSignatures">Signature Goal</label>
         <input 
-          id="targetSignatures" 
           type="number" 
+          id="targetSignatures" 
           [(ngModel)]="newTargetSignatures" 
-          name="targetSignatures" 
-          min="10">
+          name="newTargetSignatures" 
+          min="10" 
+          max="100000">
+      </div>
+
+      <div class="form-group">
+        <label for="description">Petition Statement <span class="required">*</span></label>
+        <textarea 
+          id="description" 
+          [(ngModel)]="newDescription" 
+          name="newDescription" 
+          rows="4" 
+          placeholder="Explain the problem and proposed community solution..." 
+          required></textarea>
       </div>
 
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="closeModal()">Cancel</button>
         <button type="submit" class="btn-submit" [disabled]="submitting">
-          {{ submitting ? 'Submitting...' : 'Submit Petition' }}
+          {{ submitting ? 'Publishing...' : 'Publish Petition' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Petition Modal -->
+<div class="modal-overlay" *ngIf="showEditModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>Edit Your Petition</h3>
+      <button class="close-modal-btn" (click)="closeEditModal()">&times;</button>
+    </div>
+
+    <form (ngSubmit)="onUpdatePetition()" novalidate>
+      <div class="form-group">
+        <label for="editTitle">Petition Title <span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="editTitle" 
+          [(ngModel)]="editTitle" 
+          name="editTitle" 
+          required>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="editCategory">Category</label>
+          <select id="editCategory" [(ngModel)]="editCategory" name="editCategory">
+            <option value="Environment">Environment</option>
+            <option value="Infrastructure">Infrastructure</option>
+            <option value="Sanitation">Sanitation</option>
+            <option value="Safety">Safety</option>
+            <option value="Education">Education</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="editLocation">Location/District <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="editLocation" 
+            [(ngModel)]="editLocation" 
+            name="editLocation" 
+            required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="editTargetSignatures">Signature Goal</label>
+        <input 
+          type="number" 
+          id="editTargetSignatures" 
+          [(ngModel)]="editTargetSignatures" 
+          name="editTargetSignatures" 
+          min="10" 
+          max="100000">
+      </div>
+
+      <div class="form-group">
+        <label for="editDescription">Petition Statement <span class="required">*</span></label>
+        <textarea 
+          id="editDescription" 
+          [(ngModel)]="editDescription" 
+          name="editDescription" 
+          rows="4" 
+          required></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn-submit" [disabled]="submitting">
+          {{ submitting ? 'Saving...' : 'Save Updates' }}
         </button>
       </div>
     </form>

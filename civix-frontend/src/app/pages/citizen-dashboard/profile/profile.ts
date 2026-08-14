@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-citizen-profile',
@@ -13,6 +13,7 @@ import { catchError, of } from 'rxjs';
 })
 export class CitizenProfileComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // Editable fields
   name = '';
@@ -39,24 +40,28 @@ export class CitizenProfileComponent implements OnInit {
   }
 
   fetchMyPetitions() {
-    const userId = localStorage.getItem('id');
+    const userId = localStorage.getItem('id') || localStorage.getItem('userId') || '0';
     if (!userId) return;
 
     this.fetchingPetitions = true;
     this.petitionsError = '';
 
-    this.http.get<any[]>(`http://localhost:8080/api/petitions?userId=${userId}`).subscribe({
-      next: (data) => {
-        console.log('Successfully fetched my petitions:', data);
-        this.myPetitions = data || [];
-        this.fetchingPetitions = false;
-      },
-      error: (err) => {
-        console.error('Error fetching my petitions:', err);
-        this.petitionsError = 'Failed to load your drafted petitions.';
-        this.fetchingPetitions = false;
-      }
-    });
+    this.http.get<any[]>(`http://localhost:8080/api/petitions?userId=${userId}`)
+      .pipe(
+        catchError(() => of([])),
+        finalize(() => {
+          this.fetchingPetitions = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          this.myPetitions = data || [];
+        },
+        error: () => {
+          this.petitionsError = 'Failed to load your drafted petitions.';
+        }
+      });
   }
 
   loadProfile() {
@@ -70,6 +75,10 @@ export class CitizenProfileComponent implements OnInit {
         this.state = localStorage.getItem('state') || 'Delhi';
         this.location = localStorage.getItem('location') || 'Delhi, India';
         return of(null);
+      }),
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
       })
     ).subscribe(user => {
       if (user) {
@@ -109,23 +118,23 @@ export class CitizenProfileComponent implements OnInit {
     };
 
     this.http.put('http://localhost:8080/api/users/profile', payload).pipe(
-      catchError(err => {
-        // Handle locally if server is offline or returns error
+      catchError(() => {
         localStorage.setItem('name', payload.name);
         localStorage.setItem('city', payload.city);
         localStorage.setItem('state', payload.state);
         localStorage.setItem('location', payload.location);
         
-        // Dispatch custom event to let sibling layouts know name has changed
         window.dispatchEvent(new Event('profileUpdated'));
 
-        this.loading = false;
         this.successMessage = 'Profile updated successfully!';
         return of(null);
+      }),
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
       })
     ).subscribe(res => {
       if (res !== null) {
-        // Backend success
         localStorage.setItem('name', payload.name);
         localStorage.setItem('city', payload.city);
         localStorage.setItem('state', payload.state);
@@ -134,7 +143,6 @@ export class CitizenProfileComponent implements OnInit {
         window.dispatchEvent(new Event('profileUpdated'));
         this.successMessage = 'Profile updated successfully!';
       }
-      this.loading = false;
     });
   }
 }

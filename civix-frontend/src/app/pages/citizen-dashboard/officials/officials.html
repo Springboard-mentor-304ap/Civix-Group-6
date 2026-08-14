@@ -11,16 +11,17 @@
   {{ errorMessage }}
 </div>
 
-<!-- Search Input -->
+<!-- Search Bar -->
 <div class="search-bar">
+  <span class="search-icon">🔍</span>
   <input 
     type="text" 
     [(ngModel)]="searchText" 
     (input)="applyFilter()" 
-    placeholder="Search by name, city, or state...">
+    placeholder="Search officials by name, city, department, or district...">
 </div>
 
-<!-- Loading state -->
+<!-- Loading state Spinner -->
 <div class="loader-container" *ngIf="loading; else content">
   <div class="spinner"></div>
   <p>Loading constituency directories...</p>
@@ -34,30 +35,36 @@
         <div class="avatar-official">🏛️</div>
         <div>
           <h4>{{ official.name }}</h4>
-          <span class="badge official-badge">Official Representative</span>
+          <span class="badge official-badge">✓ Verified Representative</span>
         </div>
       </div>
 
       <div class="card-details">
         <div class="detail-item">
-          <span class="icon">✉️</span> 
-          <a [href]="'mailto:' + official.email">{{ official.email }}</a>
+          <span class="label">Department:</span> 
+          <span class="val">Municipal Governance</span>
         </div>
         <div class="detail-item">
-          <span class="icon">📍</span> 
-          <span>{{ official.city || 'Delhi' }}, {{ official.state || 'Delhi' }}</span>
+          <span class="label">Area Jurisdiction:</span> 
+          <span class="val">📍 {{ official.city || 'Delhi' }}, {{ official.state || 'Delhi' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Official Contact:</span> 
+          <a [href]="'mailto:' + official.email" class="email-link">✉️ {{ official.email }}</a>
         </div>
       </div>
 
       <button class="message-btn" (click)="openMessageModal(official)">
-        💬 Send Message
+        💬 Send Direct Query
       </button>
     </div>
   </div>
 
   <ng-template #noOfficials>
-    <div class="empty-state">
-      <p>No verified officials found matching your search.</p>
+    <div class="empty-state-box">
+      <div class="empty-icon">🏛️</div>
+      <h3>No verified officials found</h3>
+      <p>There are currently no public representatives matching your search query.</p>
     </div>
   </ng-template>
 </ng-template>

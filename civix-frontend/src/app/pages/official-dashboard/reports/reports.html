@@ -1,0 +1,151 @@
+<div class="portal-header">
+  <div class="header-text-group">
+    <h1>Civic Engagement Reports</h1>
+    <div class="header-accent-line"></div>
+    <p>Analyze trends, petition resolution metrics, and citizen participation analytics.</p>
+  </div>
+</div>
+
+<!-- Filters & Exports Toolbar -->
+<div class="reports-toolbar-card">
+  <div class="period-selectors">
+    <div class="control-box">
+      <label for="selectMonth">Month:</label>
+      <select id="selectMonth" [(ngModel)]="selectedMonth" (change)="loadReport()" class="select-field">
+        <option *ngFor="let m of months" [value]="m.value">{{ m.name }}</option>
+      </select>
+    </div>
+
+    <div class="control-box">
+      <label for="selectYear">Year:</label>
+      <select id="selectYear" [(ngModel)]="selectedYear" (change)="loadReport()" class="select-field">
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="export-actions">
+    <button class="btn-export pdf" [disabled]="exportingPdf || loading" (click)="exportPdf()">
+      <span class="icon">📄</span> {{ exportingPdf ? 'Exporting...' : 'Export PDF' }}
+    </button>
+    <button class="btn-export csv" [disabled]="exportingCsv || loading" (click)="exportCsv()">
+      <span class="icon">📊</span> {{ exportingCsv ? 'Exporting...' : 'Export CSV' }}
+    </button>
+  </div>
+</div>
+
+<!-- Alert messages -->
+<div class="alert error" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- Loading State Spinner -->
+<div class="loader-container" *ngIf="loading; else dashboardContent">
+  <div class="spinner"></div>
+  <p>Compiling monthly analytics and trend parameters...</p>
+</div>
+
+<ng-template #dashboardContent>
+  <!-- Summary Cards Row -->
+  <div class="metrics-summary-row" *ngIf="reportData">
+    <div class="summary-card">
+      <div class="card-title">Total Initiatives</div>
+      <div class="card-value">{{ reportData.totalPetitions }}</div>
+      <div class="card-subtext">Submitted in {{ reportData.month }}</div>
+    </div>
+
+    <div class="summary-card resolved">
+      <div class="card-title">Resolved Petitions</div>
+      <div class="card-value text-resolved">{{ reportData.resolved }}</div>
+      <div class="card-subtext">Sanctioned & Completed</div>
+    </div>
+
+    <div class="summary-card pending">
+      <div class="card-title">Pending / In Review</div>
+      <div class="card-value text-pending">{{ reportData.pending }}</div>
+      <div class="card-subtext">Awaiting official action</div>
+    </div>
+
+    <div class="summary-card growth">
+      <div class="card-title">Monthly Growth</div>
+      <div class="card-value" [class.positive]="reportData.monthlyGrowthPercentage >= 0" [class.negative]="reportData.monthlyGrowthPercentage < 0">
+        {{ reportData.monthlyGrowthPercentage >= 0 ? '+' : '' }}{{ reportData.monthlyGrowthPercentage }}%
+      </div>
+      <div class="card-subtext">Compared to previous month</div>
+    </div>
+  </div>
+
+  <!-- Analytics Grid (Charts & Tables) -->
+  <div class="analytics-layout-grid" *ngIf="reportData">
+    
+    <!-- Doughnut Gauge: Resolution Rate -->
+    <div class="analytics-card gauge-container">
+      <h3 class="chart-header">Petition Resolution Rate</h3>
+      <div class="gauge-wrapper">
+        <canvas id="rateChart"></canvas>
+        <div class="gauge-value">{{ reportData.resolutionRate }}%</div>
+      </div>
+      <p class="gauge-footer-text">Target municipal rate: 85.0%</p>
+    </div>
+
+    <!-- Bar Chart: Status Distribution -->
+    <div class="analytics-card">
+      <h3 class="chart-header">Status Distribution</h3>
+      <div class="chart-canvas-wrapper">
+        <canvas id="statusChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Doughnut Chart: Categories Distribution -->
+    <div class="analytics-card">
+      <h3 class="chart-header">Petitions by Category</h3>
+      <div class="chart-canvas-wrapper">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Detailed Metadata Details Table -->
+    <div class="analytics-card table-card span-two-columns">
+      <h3 class="chart-header">Key Engagement Parameters</h3>
+      <table class="report-table">
+        <tbody>
+          <tr>
+            <td><strong>Most Active Category</strong></td>
+            <td><span class="highlight-tag category">{{ reportData.mostActiveCategory }}</span></td>
+            <td>Maximum citizen concern area in this period</td>
+          </tr>
+          <tr>
+            <td><strong>Most Active Locality</strong></td>
+            <td><span class="highlight-tag locality">📍 {{ reportData.mostActiveLocality }}</span></td>
+            <td>District with highest petition submission activity</td>
+          </tr>
+          <tr>
+            <td><strong>Unique Citizen Participants</strong></td>
+            <td><strong>{{ reportData.totalCitizensParticipated | number }}</strong> Citizens</td>
+            <td>Active citizens who launched or signed petitions / voted</td>
+          </tr>
+          <tr>
+            <td><strong>Average Resolution Speed</strong></td>
+            <td><strong>{{ reportData.averageResolutionTime }}</strong> Hours</td>
+            <td>Mean time elapsed between petition creation and final status</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Trending Issues List -->
+    <div class="analytics-card span-two-columns">
+      <h3 class="chart-header">🔥 Top Trending Issues</h3>
+      <div class="trending-list-box">
+        <div class="trending-item" *ngFor="let issue of reportData.topTrendingIssues; let i = index">
+          <div class="trending-index">#{{ i + 1 }}</div>
+          <div class="trending-title">{{ issue }}</div>
+        </div>
+        <div class="trending-empty" *ngIf="reportData.topTrendingIssues?.length === 0">
+          No active petitions signed in this report period.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</ng-template>

@@ -14,6 +14,9 @@ public class PetitionResponse {
     private long currentSignatures;
     private String status;
     private String officialResponse;
+    private String assignedDepartment;
+    private String priority;
+    private String internalNotes;
     private LocalDateTime createdAt;
 
     public PetitionResponse() {
@@ -109,6 +112,30 @@ public class PetitionResponse {
 
     public void setOfficialResponse(String officialResponse) {
         this.officialResponse = officialResponse;
+    }
+
+    public String getAssignedDepartment() {
+        return assignedDepartment;
+    }
+
+    public void setAssignedDepartment(String assignedDepartment) {
+        this.assignedDepartment = assignedDepartment;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getInternalNotes() {
+        return internalNotes;
+    }
+
+    public void setInternalNotes(String internalNotes) {
+        this.internalNotes = internalNotes;
     }
 
     public LocalDateTime getCreatedAt() {

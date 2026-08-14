@@ -9,4 +9,5 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     boolean existsByPollIdAndUserId(Long pollId, Long userId);
     List<Vote> findByPollId(Long pollId);
     long countByUserId(Long userId);
+    java.util.List<Vote> findAllByTimestampBetween(java.time.LocalDateTime start, java.time.LocalDateTime end);
 }

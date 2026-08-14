@@ -1,11 +1,12 @@
-<div class="petitions-header">
-  <div>
-    <h2>Petitions Management</h2>
-    <p>Review active petitions filed in <strong>{{ location }}</strong>, update their statuses, and add official comments.</p>
+<div class="portal-header">
+  <div class="header-text-group">
+    <h1>Petition Management Portal</h1>
+    <div class="header-accent-line"></div>
+    <p>Review, assign, approve, and manage municipal petition lifecycles across your jurisdiction.</p>
   </div>
 </div>
 
-<!-- Alert messages -->
+<!-- Alert notifications -->
 <div class="alert success" *ngIf="successMessage">
   {{ successMessage }}
 </div>
@@ -13,72 +14,315 @@
   {{ errorMessage }}
 </div>
 
+<!-- Top Metrics Dashboard Bar -->
+<div class="stats-overview-grid">
+  <div class="metric-card">
+    <div class="metric-label">Total Petitions</div>
+    <div class="metric-value">{{ totalCount }}</div>
+    <div class="metric-desc">All submitted initiatives</div>
+  </div>
+  <div class="metric-card active">
+    <div class="metric-label">Pending Review</div>
+    <div class="metric-value text-active">{{ pendingReviewCount }}</div>
+    <div class="metric-desc">Awaiting official action</div>
+  </div>
+  <div class="metric-card reviewing">
+    <div class="metric-label">Under Review</div>
+    <div class="metric-value text-review">{{ underReviewCount }}</div>
+    <div class="metric-desc">Currently in evaluation</div>
+  </div>
+  <div class="metric-card approved">
+    <div class="metric-label">Approved</div>
+    <div class="metric-value text-approved">{{ approvedCount }}</div>
+    <div class="metric-desc">Sanctioned municipal actions</div>
+  </div>
+  <div class="metric-card critical">
+    <div class="metric-label">Critical Priority</div>
+    <div class="metric-value text-critical">{{ criticalCount }}</div>
+    <div class="metric-desc">Urgent citizen issues</div>
+  </div>
+</div>
+
+<!-- Multi-Filter & Search Controls Bar -->
+<div class="controls-filter-card">
+  <div class="search-box-wrapper">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input 
+      type="text" 
+      [(ngModel)]="searchText" 
+      (input)="applyFilters()" 
+      placeholder="Search petitions by title, description or citizen name...">
+  </div>
+
+  <div class="filter-dropdowns-row">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
+        <option value="All">All Statuses</option>
+        <option value="ACTIVE">ACTIVE (Pending)</option>
+        <option value="UNDER_REVIEW">UNDER REVIEW</option>
+        <option value="APPROVED">APPROVED</option>
+        <option value="REJECTED">REJECTED</option>
+        <option value="RESOLVED">RESOLVED</option>
+        <option value="CLOSED">CLOSED</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Department:</label>
+      <select [(ngModel)]="selectedDepartment" (change)="applyFilters()">
+        <option value="All">All Departments</option>
+        <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Priority:</label>
+      <select [(ngModel)]="selectedPriority" (change)="applyFilters()">
+        <option value="All">All Priorities</option>
+        <option *ngFor="let prio of priorities" [value]="prio">{{ prio }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Category:</label>
+      <select [(ngModel)]="selectedCategory" (change)="applyFilters()">
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Start Date:</label>
+      <input type="date" [(ngModel)]="startDateFilter" (change)="applyFilters()" class="date-input-field">
+    </div>
+
+    <div class="filter-group">
+      <label>End Date:</label>
+      <input type="date" [(ngModel)]="endDateFilter" (change)="applyFilters()" class="date-input-field">
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Action Toolbar (Appears when items are selected) -->
+<div class="bulk-actions-toolbar" *ngIf="selectedIds.size > 0">
+  <span class="bulk-count">Selected <strong>{{ selectedIds.size }}</strong> petitions</span>
+  <div class="bulk-buttons-group">
+    <button class="btn-bulk approve" (click)="bulkUpdateStatus('APPROVED')">Approve Selected</button>
+    <button class="btn-bulk review" (click)="bulkUpdateStatus('UNDER_REVIEW')">Mark Under Review</button>
+    <button class="btn-bulk reject" (click)="bulkUpdateStatus('REJECTED')">Reject Selected</button>
+    <button class="btn-bulk close" (click)="bulkUpdateStatus('CLOSED')">Close Selected</button>
+  </div>
+</div>
+
 <!-- Loading state -->
 <div class="loader-container" *ngIf="loading; else content">
   <div class="spinner"></div>
-  <p>Loading petitions for your municipal jurisdiction...</p>
+  <p>Loading municipal petition portal...</p>
 </div>
 
 <ng-template #content>
-  <!-- Petitions Grid -->
-  <div class="petitions-grid" *ngIf="petitions.length > 0; else noPetitions">
-    <div class="petition-card" *ngFor="let petition of petitions" [class.resolved]="petition.status === 'RESOLVED'">
-      <div class="card-top">
-        <span class="category-tag">{{ petition.category }}</span>
-        <span class="status-badge" [class]="petition.status.toLowerCase()">
-          {{ petition.status.replace('_', ' ') }}
-        </span>
+  <div class="petitions-management-list" *ngIf="filteredPetitions.length > 0; else emptyState">
+    <div class="official-petition-card" *ngFor="let petition of filteredPetitions">
+      
+      <!-- Card Top Badge Header -->
+      <div class="card-top-header">
+        <div class="left-badges">
+          <input 
+            type="checkbox" 
+            class="checkbox-select" 
+            [checked]="selectedIds.has(petition.id)" 
+            (change)="toggleSelect(petition.id)" 
+            title="Select petition for bulk actions">
+          <span class="badge category-badge">{{ petition.category }}</span>
+          <span class="badge status-badge" [attr.data-status]="petition.status">{{ petition.status.replace('_', ' ') }}</span>
+          <span class="badge priority-badge" [attr.data-priority]="petition.priority || 'MEDIUM'">
+            <span class="dot-priority" *ngIf="petition.priority === 'CRITICAL'"></span>
+            {{ petition.priority || 'MEDIUM' }} PRIORITY
+          </span>
+          <span class="badge dept-badge" *ngIf="petition.assignedDepartment">
+            🏛️ {{ petition.assignedDepartment }}
+          </span>
+          <button class="btn-card-timeline" (click)="openTimelineModal(petition)" title="View Status Timeline & Responses">
+            🕒 History
+          </button>
+        </div>
+
+        <button class="btn-icon-delete" (click)="deletePetition(petition)" title="Delete Petition">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>
       </div>
 
-      <h3>{{ petition.title }}</h3>
-      <p class="description">{{ petition.description }}</p>
+      <!-- Content -->
+      <h3 class="petition-title">{{ petition.title }}</h3>
+      <p class="petition-description">{{ petition.description }}</p>
 
-      <!-- Signatures Progress Meter -->
+      <div class="petition-meta-row">
+        <span>👤 Citizen: <strong>{{ petition.creatorName || 'Anonymous Citizen' }}</strong></span>
+        <span>📍 Location: <strong>{{ petition.location }}</strong></span>
+        <span *ngIf="petition.createdAt">📅 Created: <strong>{{ petition.createdAt | date:'shortDate' }}</strong></span>
+      </div>
+
+      <!-- Signature Progress Bar -->
       <div class="progress-section">
-        <div class="progress-bar">
-          <div 
-            class="progress-fill" 
-            [style.width.%]="(petition.currentSignatures / petition.targetSignatures) * 100">
-          </div>
+        <div class="progress-labels">
+          <span class="sig-count"><strong>{{ petition.currentSignatures }}</strong> Signatures</span>
+          <span class="sig-goal">Goal: <strong>{{ petition.targetSignatures }}</strong></span>
         </div>
-        <div class="progress-stats">
-          <span><strong>{{ petition.currentSignatures | number }}</strong> / {{ petition.targetSignatures | number }} signatures</span>
-          <span>Goal: {{ petition.targetSignatures | number }}</span>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="getProgressPercent(petition)"></div>
         </div>
       </div>
 
-      <!-- Administrative Action Panel -->
-      <div class="action-panel">
-        <h4>Administrative Action</h4>
-        
-        <div class="form-group">
-          <label [for]="'status-' + petition.id">Set Status</label>
-          <select [id]="'status-' + petition.id" [(ngModel)]="petition.status">
-            <option *ngFor="let opt of statusOptions" [value]="opt">
-              {{ opt.replace('_', ' ') }}
-            </option>
+      <!-- Lifecycle Action Buttons Bar -->
+      <div class="lifecycle-actions-bar">
+        <span class="actions-label">Lifecycle Action:</span>
+        <div class="action-buttons-group">
+          <button 
+            class="btn-action review" 
+            [class.active]="petition.status === 'UNDER_REVIEW'" 
+            (click)="changeStatus(petition, 'UNDER_REVIEW')">
+            Under Review
+          </button>
+          <button 
+            class="btn-action approve" 
+            [class.active]="petition.status === 'APPROVED'" 
+            (click)="changeStatus(petition, 'APPROVED')">
+            Approve
+          </button>
+
+          <button 
+            class="btn-action resolve" 
+            [class.active]="petition.status === 'RESOLVED'" 
+            (click)="changeStatus(petition, 'RESOLVED')">
+            Resolve
+          </button>
+          <button 
+            class="btn-action reject" 
+            [class.active]="petition.status === 'REJECTED'" 
+            (click)="changeStatus(petition, 'REJECTED')">
+            Reject
+          </button>
+
+          <button 
+            class="btn-action close" 
+            [class.active]="petition.status === 'CLOSED'" 
+            (click)="changeStatus(petition, 'CLOSED')">
+            Close
+          </button>
+          <button 
+            class="btn-action reopen" 
+            *ngIf="petition.status === 'CLOSED' || petition.status === 'REJECTED'" 
+            (click)="changeStatus(petition, 'ACTIVE')">
+            Reopen
+          </button>
+        </div>
+      </div>
+
+      <!-- Administrative Management Drawer -->
+      <div class="admin-management-grid">
+        <!-- Assign Department -->
+        <div class="admin-control-box">
+          <label>Assign Department:</label>
+          <select [value]="petition.assignedDepartment || ''" (change)="assignDepartment(petition, $event)">
+            <option value="">Unassigned</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label [for]="'comment-' + petition.id">Official Response / Comment</label>
-          <textarea
-            [id]="'comment-' + petition.id"
-            [(ngModel)]="petition.officialResponse"
-            rows="3"
-            placeholder="Enter the official response or action plan updates..."></textarea>
+        <!-- Priority Setter -->
+        <div class="admin-control-box">
+          <label>Change Priority:</label>
+          <select [value]="petition.priority || 'MEDIUM'" (change)="changePriority(petition, $event)">
+            <option *ngFor="let prio of priorities" [value]="prio">{{ prio }}</option>
+          </select>
         </div>
 
-        <button class="save-review-btn" (click)="updatePetitionStatus(petition)" [disabled]="submittingMap[petition.id]">
-          {{ submittingMap[petition.id] ? 'Saving...' : '💾 Save Review & Response' }}
-        </button>
+        <!-- Internal Notes (Officials Only) -->
+        <div class="admin-control-box full-width">
+          <label>Internal Official Notes <span class="notes-tag">(Private to Officials)</span>:</label>
+          <div class="notes-input-group">
+            <input 
+              type="text" 
+              [(ngModel)]="notesMap[petition.id]" 
+              [placeholder]="petition.internalNotes || 'Enter internal notes for administrative tracking...'">
+            <button class="btn-save-notes" (click)="saveInternalNotes(petition)">Save Note</button>
+          </div>
+        </div>
+
+        <!-- Official Response to Citizen -->
+        <div class="admin-control-box full-width">
+          <label>Public Official Response <span class="response-tag">(Visible to Citizen)</span>:</label>
+          <div class="response-input-group">
+            <textarea 
+              [(ngModel)]="petition.officialResponse" 
+              placeholder="Write official response or update to citizen..."></textarea>
+            <button 
+              class="btn-submit-response" 
+              [disabled]="submittingMap[petition.id]" 
+              (click)="updatePetitionField(petition, { reply: petition.officialResponse })">
+              {{ submittingMap[petition.id] ? 'Updating...' : 'Publish Response' }}
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <ng-template #noPetitions>
-    <div class="empty-state">
-      <p>No community petitions found for the location <strong>{{ location }}</strong>.</p>
+  <ng-template #emptyState>
+    <div class="empty-state-card">
+      <div class="empty-icon">📜</div>
+      <h3>No petitions found</h3>
+      <p>There are no citizen petitions matching your selected filters in your district.</p>
     </div>
   </ng-template>
 </ng-template>
+
+<!-- Status Timeline Modal -->
+<div class="timeline-modal-backdrop" *ngIf="showTimelineModal">
+  <div class="timeline-modal-card">
+    <div class="modal-header">
+      <h2>Petition Lifecycle Timeline</h2>
+      <button class="btn-close-modal" (click)="closeTimelineModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-info-text">Tracking history for petition ID: <strong>#{{ selectedTimelinePetition?.id }}</strong></p>
+      <h3 class="modal-pet-title">{{ selectedTimelinePetition?.title }}</h3>
+
+      <div class="modal-loader" *ngIf="timelineLoading">
+        <div class="spinner"></div>
+        <p>Loading timeline history...</p>
+      </div>
+
+      <div class="timeline-stepper" *ngIf="!timelineLoading">
+        <div class="timeline-step" *ngFor="let event of timelineEvents">
+          <div class="step-marker">
+            <span class="marker-dot"></span>
+            <span class="marker-line"></span>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <span class="step-status">{{ event.status.replace('_', ' ') }}</span>
+              <span class="step-date">{{ event.updatedAt | date:'medium' }}</span>
+            </div>
+            <div class="step-author" *ngIf="event.officialName">
+              Updated by Official: <strong>{{ event.officialName }}</strong>
+            </div>
+            <div class="step-response" *ngIf="event.response">
+              💬 "<em>{{ event.response }}</em>"
+            </div>
+          </div>
+        </div>
+        <div class="empty-timeline-state" *ngIf="timelineEvents.length === 0">
+          <p>No history entries found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

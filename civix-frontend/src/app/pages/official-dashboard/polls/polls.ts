@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, finalize } from 'rxjs';
 
 interface Poll {
   id: number;
@@ -24,6 +24,7 @@ interface Poll {
 })
 export class OfficialPollsComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   polls: Poll[] = [];
 
@@ -49,43 +50,50 @@ export class OfficialPollsComponent implements OnInit {
   fetchPolls() {
     this.errorMessage = '';
     this.loading = true;
-    this.http.get<any[]>('http://localhost:8080/api/polls').subscribe({
-      next: (data) => {
-        this.polls = data.map(poll => {
-          let optionsList: string[] = [];
-          if (Array.isArray(poll.options)) {
-            optionsList = poll.options;
-          } else if (typeof poll.options === 'string') {
-            try {
-              optionsList = JSON.parse(poll.options);
-            } catch (e) {
-              optionsList = poll.options.split(',').map((s: string) => s.trim());
+    this.http.get<any[]>('http://localhost:8080/api/polls')
+      .pipe(
+        catchError(() => of([])),
+        finalize(() => {
+          this.loading = false;
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (data) => {
+          const rawList = data || [];
+          this.polls = rawList.map(poll => {
+            let optionsList: string[] = [];
+            if (Array.isArray(poll.options)) {
+              optionsList = poll.options;
+            } else if (typeof poll.options === 'string') {
+              try {
+                optionsList = JSON.parse(poll.options);
+              } catch (e) {
+                optionsList = poll.options.split(',').map((s: string) => s.trim());
+              }
             }
-          }
-          
-          let resultsMap = poll.results || {};
-          if (typeof resultsMap === 'string') {
-            try { resultsMap = JSON.parse(resultsMap); } catch(e) {}
-          }
+            
+            let resultsMap = poll.results || {};
+            if (typeof resultsMap === 'string') {
+              try { resultsMap = JSON.parse(resultsMap); } catch(e) {}
+            }
 
-          return {
-            id: poll.id,
-            title: poll.title,
-            description: poll.description,
-            options: optionsList.length > 0 ? optionsList : ['Yes', 'No'],
-            startDate: poll.startDate,
-            endDate: poll.endDate,
-            results: resultsMap,
-            status: poll.status || 'ACTIVE'
-          };
-        });
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = 'Failed to load polls from the server.';
-        this.loading = false;
-      }
-    });
+            return {
+              id: poll.id,
+              title: poll.title,
+              description: poll.description,
+              options: optionsList.length > 0 ? optionsList : ['Yes', 'No'],
+              startDate: poll.startDate,
+              endDate: poll.endDate,
+              results: resultsMap,
+              status: poll.status || 'ACTIVE'
+            };
+          });
+        },
+        error: () => {
+          this.errorMessage = 'Failed to load polls from the server.';
+        }
+      });
   }
 
   closePoll(poll: Poll) {

@@ -36,6 +36,26 @@ public class Petition {
     @Column(name = "official_response", columnDefinition = "TEXT")
     private String officialResponse;
 
+    @Column(name = "assigned_department", length = 100)
+    private String assignedDepartment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "assigned_official_id")
+    private User assignedOfficial;
+
+    @Column(length = 20)
+    private String priority = "MEDIUM";
+
+    @Column(name = "internal_notes", columnDefinition = "TEXT")
+    private String internalNotes;
+
+    @Column(name = "reviewed_at")
+    private LocalDateTime reviewedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reviewed_by_id")
+    private User reviewedBy;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -126,6 +146,54 @@ public class Petition {
 
     public void setOfficialResponse(String officialResponse) {
         this.officialResponse = officialResponse;
+    }
+
+    public String getAssignedDepartment() {
+        return assignedDepartment;
+    }
+
+    public void setAssignedDepartment(String assignedDepartment) {
+        this.assignedDepartment = assignedDepartment;
+    }
+
+    public User getAssignedOfficial() {
+        return assignedOfficial;
+    }
+
+    public void setAssignedOfficial(User assignedOfficial) {
+        this.assignedOfficial = assignedOfficial;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getInternalNotes() {
+        return internalNotes;
+    }
+
+    public void setInternalNotes(String internalNotes) {
+        this.internalNotes = internalNotes;
+    }
+
+    public LocalDateTime getReviewedAt() {
+        return reviewedAt;
+    }
+
+    public void setReviewedAt(LocalDateTime reviewedAt) {
+        this.reviewedAt = reviewedAt;
+    }
+
+    public User getReviewedBy() {
+        return reviewedBy;
+    }
+
+    public void setReviewedBy(User reviewedBy) {
+        this.reviewedBy = reviewedBy;
     }
 
     public LocalDateTime getCreatedAt() {

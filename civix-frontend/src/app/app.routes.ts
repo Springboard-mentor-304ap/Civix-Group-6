@@ -15,6 +15,7 @@ import { OfficialPetitionsComponent } from './pages/official-dashboard/petitions
 import { OfficialPollsComponent } from './pages/official-dashboard/polls/polls';
 import { OfficialQueriesComponent } from './pages/official-dashboard/queries/queries';
 import { OfficialProfileComponent } from './pages/official-dashboard/profile/profile';
+import { OfficialReportsComponent } from './pages/official-dashboard/reports/reports';
 import { authGuard, guestGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
@@ -46,6 +47,7 @@ export const routes: Routes = [
       { path: 'petitions', component: OfficialPetitionsComponent },
       { path: 'polls', component: OfficialPollsComponent },
       { path: 'queries', component: OfficialQueriesComponent },
+      { path: 'reports', component: OfficialReportsComponent },
       { path: 'profile', component: OfficialProfileComponent }
     ]
   },

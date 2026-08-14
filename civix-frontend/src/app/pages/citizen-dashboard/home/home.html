@@ -1,14 +1,23 @@
 <header class="header">
   <div class="welcome-box">
-    <h1>Welcome Back, <span class="highlight">{{ username }}</span></h1>
-    <p>Here is your civic overview for today.</p>
+    <h1>Welcome Back, <span class="highlight">{{ username }}</span> 👋</h1>
+    <p>Your voice matters. Let's build a stronger community together.</p>
   </div>
 
-  <div class="user-badge">
-    <div class="avatar">👤</div>
-    <div class="badge-info">
-      <strong>{{ email }}</strong>
-      <span class="role-pill">{{ role }}</span>
+  <div class="header-right-tools">
+    <div class="location-picker-box">
+      <span class="loc-icon">📍</span>
+      <select [value]="selectedLocation" (change)="onLocationChange($event)" class="location-select">
+        <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+      </select>
+    </div>
+
+    <div class="user-badge">
+      <div class="avatar">👤</div>
+      <div class="badge-info">
+        <strong>{{ email }}</strong>
+        <span class="role-pill">{{ role }}</span>
+      </div>
     </div>
   </div>
 </header>
@@ -18,44 +27,65 @@
   {{ errorMessage }}
 </div>
 
-<!-- Loading state -->
+<!-- Loading State Spinner -->
 <div class="loader-container" *ngIf="loading; else content">
   <div class="spinner"></div>
   <p>Syncing civic registry details...</p>
 </div>
 
 <ng-template #content>
-  <!-- Stats Cards -->
+  <!-- Category Filter Chips -->
+  <div class="category-chips-bar">
+    <span class="chips-label">Categories:</span>
+    <button 
+      *ngFor="let cat of categories" 
+      class="chip-btn" 
+      [class.active]="selectedCategory === cat"
+      (click)="selectCategory(cat)">
+      {{ cat }}
+    </button>
+  </div>
+
+  <!-- 4 Stats Cards Grid -->
   <div class="stats-grid">
-    <div class="stat-card">
+    <div class="stat-card" (click)="navigateTo('petitions', 'MY')">
       <div class="stat-header">
-        <span>Active Petitions</span>
+        <span>My Petitions</span>
         <span class="stat-icon green">📜</span>
       </div>
-      <h2 class="stat-value">{{ activePetitionsCount }}</h2>
-      <p class="stat-desc">Community initiatives open for signing</p>
+      <h2 class="stat-value">{{ myPetitionsCount }}</h2>
+      <p class="stat-desc">Initiatives created by you</p>
     </div>
 
-    <div class="stat-card">
+    <div class="stat-card" (click)="navigateTo('petitions', 'SIGNED')">
+      <div class="stat-header">
+        <span>Signed Petitions</span>
+        <span class="stat-icon green">✍️</span>
+      </div>
+      <h2 class="stat-value">{{ signedPetitionsCount }}</h2>
+      <p class="stat-desc">Community actions supported</p>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('polls')">
       <div class="stat-header">
         <span>Polls Participated</span>
         <span class="stat-icon blue">🗳️</span>
       </div>
       <h2 class="stat-value">{{ pollsParticipatedCount }}</h2>
-      <p class="stat-desc">Decisions shaped by your voice</p>
+      <p class="stat-desc">Public decisions voted on</p>
     </div>
 
-    <div class="stat-card">
+    <div class="stat-card" (click)="navigateTo('petitions', 'ALL')">
       <div class="stat-header">
-        <span>Official Responses</span>
-        <span class="stat-icon purple">🏛️</span>
+        <span>Total Signatures</span>
+        <span class="stat-icon purple">📈</span>
       </div>
-      <h2 class="stat-value">{{ officialResponsesCount }}</h2>
-      <p class="stat-desc">Replies received from administrators</p>
+      <h2 class="stat-value">{{ totalSignaturesCount }}</h2>
+      <p class="stat-desc">Combined signature momentum</p>
     </div>
   </div>
 
-  <!-- Quick Actions -->
+  <!-- Quick Actions Section -->
   <section class="section">
     <h3>Quick Actions</h3>
     <div class="actions-grid">
@@ -73,4 +103,72 @@
       </button>
     </div>
   </section>
+
+  <!-- Active Petitions Section -->
+  <section class="section">
+    <div class="section-top-bar">
+      <h3>Active Petitions Near You</h3>
+      <a class="view-all-link" (click)="navigateTo('petitions')">View All Petitions &rarr;</a>
+    </div>
+
+    <div class="petitions-grid" *ngIf="filteredPetitions.length > 0; else emptyPetitions">
+      <div class="petition-card" *ngFor="let p of filteredPetitions.slice(0, 3)">
+        <!-- Top Badges Row -->
+        <div class="card-badges">
+          <span class="badge category-badge">{{ p.category || 'General' }}</span>
+          <span class="badge location-badge">📍 {{ p.location || 'Local District' }}</span>
+        </div>
+
+        <!-- Title & Description -->
+        <h4 class="petition-title">{{ p.title }}</h4>
+        <p class="petition-desc">{{ p.description }}</p>
+
+        <!-- Thin Progress Meter & Signature Counts -->
+        <div class="progress-section">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getProgressPercent(p)"></div>
+          </div>
+          <div class="progress-stats">
+            <span class="current-sig"><strong>{{ (p.currentSignatures || 0) | number }}</strong> Signatures</span>
+            <span class="goal-sig">Goal: {{ (p.targetSignatures || 100) | number }}</span>
+          </div>
+        </div>
+
+        <!-- Bottom Footer Row -->
+        <div class="card-footer">
+          <span class="status-badge" [class.active]="p.status === 'ACTIVE'">{{ (p.status || 'ACTIVE').replace('_', ' ') }}</span>
+          <button class="btn-sign-small" (click)="navigateTo('petitions')">Sign Petition</button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #emptyPetitions>
+      <div class="empty-state-box">
+        <div class="empty-icon">📜</div>
+        <h4>No active petitions match your selection</h4>
+        <p>Start a new community petition or adjust your category and location filters.</p>
+        <button class="btn-primary" (click)="navigateTo('petitions')">+ Create Petition</button>
+      </div>
+    </ng-template>
+  </section>
+
+  <!-- Recent Activity Feed -->
+  <section class="section">
+    <h3>Recent Civic Activity</h3>
+    <div class="activity-feed-list" *ngIf="activities.length > 0; else emptyActivity">
+      <div class="activity-item" *ngFor="let act of activities">
+        <div class="activity-icon">{{ act.icon }}</div>
+        <div class="activity-content">
+          <p class="activity-title">{{ act.title }}</p>
+          <span class="activity-time">{{ act.time }}</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptyActivity>
+      <div class="empty-state-box">
+        <p>No recent activity logged yet.</p>
+      </div>
+    </ng-template>
+  </section>
 </ng-template>
+

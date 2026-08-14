@@ -7,8 +7,8 @@
 
 /* Sidebar Styling */
 .sidebar {
-  width: 280px;
-  background-color: #0d3b2e; /* consistent dark green theme */
+  width: 270px;
+  background-color: #0d3b2e; /* Signature Deep Green Theme */
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -38,14 +38,16 @@
   border: 1px solid rgba(231, 213, 166, 0.3);
 }
 
-.brand h2 {
+.brand-text h2 {
   font-family: 'Fraunces', serif;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
+  color: #ffffff;
   letter-spacing: 0.5px;
+  margin: 0;
 }
 
-.brand small {
+.brand-text small {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   color: #e7d5a6;
@@ -79,18 +81,22 @@
 
 .nav-item.active {
   border-left: 4px solid #16a085;
-  background-color: rgba(22, 160, 133, 0.15);
+  background-color: rgba(22, 160, 133, 0.2);
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .sidebar-footer {
   margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(231, 213, 166, 0.15);
 }
 
 .logout-btn {
   width: 100%;
   padding: 12px;
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
   border-radius: 10px;
   font-weight: 600;
   display: flex;
@@ -98,12 +104,12 @@
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease;
-  border: none;
+  border: 1px solid rgba(239, 68, 68, 0.2);
   cursor: pointer;
 }
 
 .logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.25);
+  background-color: rgba(239, 68, 68, 0.3);
   color: #fff;
 }
 
@@ -138,3 +144,4 @@
     padding: 20px;
   }
 }
+

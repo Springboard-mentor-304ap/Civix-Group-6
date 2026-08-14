@@ -1,5 +1,6 @@
 package com.civix.civix_backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -7,8 +8,13 @@ public class PollRequest {
     private String title;
     private String description;
     private List<String> options;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "[yyyy-MM-dd][dd-MM-yyyy]")
     private LocalDate startDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "[yyyy-MM-dd][dd-MM-yyyy]")
     private LocalDate endDate;
+
     private String targetLocation;
 
     public PollRequest() {

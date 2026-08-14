@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
+import { catchError, of, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-official-profile',
@@ -13,6 +13,7 @@ import { catchError, of } from 'rxjs';
 })
 export class OfficialProfileComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   // Editable fields
   name = '';
@@ -45,6 +46,10 @@ export class OfficialProfileComponent implements OnInit {
         this.location = localStorage.getItem('location') || 'Delhi, India';
         this.department = localStorage.getItem('department') || 'Municipal Administration';
         return of(null);
+      }),
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
       })
     ).subscribe(user => {
       if (user) {
@@ -87,7 +92,7 @@ export class OfficialProfileComponent implements OnInit {
     };
 
     this.http.put('http://localhost:8080/api/users/profile', payload).pipe(
-      catchError(err => {
+      catchError(() => {
         // Fallback local update
         localStorage.setItem('name', payload.name);
         localStorage.setItem('city', payload.city);
@@ -97,9 +102,12 @@ export class OfficialProfileComponent implements OnInit {
         
         window.dispatchEvent(new Event('profileUpdated'));
 
-        this.loading = false;
         this.successMessage = 'Official profile updated successfully!';
         return of(null);
+      }),
+      finalize(() => {
+        this.loading = false;
+        this.cdr.detectChanges();
       })
     ).subscribe(res => {
       if (res !== null) {
@@ -112,7 +120,6 @@ export class OfficialProfileComponent implements OnInit {
         window.dispatchEvent(new Event('profileUpdated'));
         this.successMessage = 'Official profile updated successfully!';
       }
-      this.loading = false;
     });
   }
 }
