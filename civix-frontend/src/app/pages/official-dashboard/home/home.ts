@@ -30,6 +30,7 @@ export class OfficialHomeComponent implements OnInit {
   @HostListener('window:profileUpdated')
   onProfileUpdated() {
     this.username = localStorage.getItem('name') || 'Official Representative';
+    this.cdr.detectChanges();
   }
 
   ngOnInit() {
@@ -37,38 +38,74 @@ export class OfficialHomeComponent implements OnInit {
   }
 
   fetchOfficialStats() {
-    const location = localStorage.getItem('city') || '';
-    const userId = localStorage.getItem('id') || localStorage.getItem('userId') || '0';
+    const userId = localStorage.getItem('id') ?? localStorage.getItem('userId');
 
+    if (!userId) {
+      console.warn('Official session not found. Redirecting to login.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const location = localStorage.getItem('city') || 'Delhi';
+    console.log('[Home] Loading state before request:', this.loading);
     this.loading = true;
-    this.errorMessage = '';
+    this.cdr.detectChanges();
 
-    const petitions$ = this.http.get<any[]>(`http://localhost:8080/api/petitions${location ? '?location=' + location : ''}`)
-      .pipe(catchError(() => of([])));
+    console.log(`[Home] Request sent for userId: ${userId}, location: ${location}`);
 
-    const polls$ = this.http.get<any[]>('http://localhost:8080/api/polls')
-      .pipe(catchError(() => of([])));
+    const petitions$ = this.http.get<any[]>(`http://localhost:8080/api/petitions?location=${location}`).pipe(
+      catchError(err => {
+        console.error('[Home] Error fetching petitions for stats:', err);
+        return of([]);
+      })
+    );
 
-    const queries$ = this.http.get<any[]>(`http://localhost:8080/api/queries?officialId=${userId}`)
-      .pipe(catchError(() => of([])));
+    const polls$ = this.http.get<any[]>('http://localhost:8080/api/polls').pipe(
+      catchError(err => {
+        console.error('[Home] Error fetching polls for stats:', err);
+        return of([]);
+      })
+    );
 
-    forkJoin([petitions$, polls$, queries$])
-      .pipe(
-        finalize(() => {
-          this.loading = false;
-          this.cdr.detectChanges();
-        })
-      )
-      .subscribe({
-        next: ([petitions, polls, queries]) => {
-          this.pendingPetitionsCount = (petitions || []).filter(p => p.status === 'UNDER_REVIEW' || p.status === 'ACTIVE').length;
-          this.activePollsCount = (polls || []).filter(p => p.status === 'ACTIVE').length;
-          this.unresolvedQueriesCount = (queries || []).filter(q => q.status === 'PENDING').length;
-        },
-        error: () => {
-          this.errorMessage = 'Failed to load official dashboard stats.';
-        }
-      });
+    const queries$ = this.http.get<any[]>(`http://localhost:8080/api/queries?officialId=${userId}`).pipe(
+      catchError(err => {
+        console.error('[Home] Error fetching queries for stats:', err);
+        return of([]);
+      })
+    );
+
+    forkJoin([petitions$, polls$, queries$]).pipe(
+      finalize(() => {
+        this.loading = false;
+        console.log('[Home] Loading state after finalize:', this.loading);
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: ([petitions, polls, queries]) => {
+        console.log('[Home] Response received:', { petitions, polls, queries });
+        const safePetitions = Array.isArray(petitions) ? petitions : [];
+        const safePolls = Array.isArray(polls) ? polls : [];
+        const safeQueries = Array.isArray(queries) ? queries : [];
+
+        console.log('[Home] Collection lengths:', {
+          petitionsLength: safePetitions.length,
+          pollsLength: safePolls.length,
+          queriesLength: safeQueries.length
+        });
+
+        this.pendingPetitionsCount = safePetitions.filter(p => p && (p.status === 'UNDER_REVIEW' || p.status === 'ACTIVE')).length;
+        this.activePollsCount = safePolls.filter(p => p && p.status === 'ACTIVE').length;
+        this.unresolvedQueriesCount = safeQueries.filter(q => q && q.status === 'PENDING').length;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('[Home] Unexpected error in forkJoin subscribe:', err);
+        this.errorMessage = 'Failed to sync with administrative database registers.';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   navigateTo(path: string) {

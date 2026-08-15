@@ -1,12 +1,9 @@
-<div class="polls-page-header">
-  <div class="header-text-group">
-    <h1>Public Community Polls</h1>
-    <div class="header-accent-line"></div>
-    <p>Participate in community decisions and help shape your city.</p>
-  </div>
+<div class="polls-header">
+  <h2>Civic Polls</h2>
+  <p>Cast your digital ballot on crucial town issues and see instant verifiable results.</p>
 </div>
 
-<!-- Alert notifications -->
+<!-- Alert messages -->
 <div class="alert success" *ngIf="successMessage">
   {{ successMessage }}
 </div>
@@ -14,199 +11,158 @@
   {{ errorMessage }}
 </div>
 
-<!-- Controls Bar: Segmented Tabs & Search -->
-<div class="polls-controls-bar">
-  <div class="segmented-tabs">
-    <button 
-      class="tab-pill" 
-      [class.active]="activeTab === 'ACTIVE'" 
-      (click)="setTab('ACTIVE')">
-      <span>Active Polls</span>
-      <span class="tab-badge">{{ filteredActivePolls.length }}</span>
-    </button>
-    <button 
-      class="tab-pill" 
-      [class.active]="activeTab === 'CLOSED'" 
-      (click)="setTab('CLOSED')">
-      <span>Closed Decisions</span>
-      <span class="tab-badge alt">{{ filteredClosedPolls.length }}</span>
-    </button>
-  </div>
-
-  <div class="search-input-wrapper">
-    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"></circle>
-      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-    </svg>
-    <input 
-      type="text" 
-      [(ngModel)]="searchText" 
-      (input)="applyFilter()" 
-      placeholder="Search polls...">
-  </div>
-</div>
-
 <!-- Loading state -->
 <div class="loader-container" *ngIf="loading; else content">
   <div class="spinner"></div>
-  <p>Loading community polls...</p>
+  <p>Syncing municipal ballots...</p>
 </div>
 
 <ng-template #content>
-  <!-- ACTIVE POLLS TAB -->
-  <div *ngIf="activeTab === 'ACTIVE'">
-    <div class="polls-list-grid" *ngIf="filteredActivePolls.length > 0; else noActive">
-      <div class="poll-card-saas" *ngFor="let poll of filteredActivePolls">
-        <!-- Header Row -->
-        <div class="poll-card-header">
-          <div class="badge-row">
-            <span class="status-pill active-pill">
-              <span class="dot pulse"></span>
-              ACTIVE POLL
-            </span>
-            <span class="status-pill voted-pill" *ngIf="poll.userVoted">
-              ✓ You Voted
-            </span>
-          </div>
+  <!-- ACTIVE POLLS SECTION -->
+  <div class="section-title">
+    <h3>Active Polls</h3>
+    <span class="active-count">{{ activePolls.length }} Live</span>
+  </div>
+  
+  <div class="polls-grid" *ngIf="activePolls.length > 0; else noActive">
+    <div class="poll-card" *ngFor="let poll of activePolls">
+      <div class="poll-top">
+        <span class="badge live">🗳️ Live</span>
+        <div class="poll-dates-highlight">
+          <span class="date-item"><strong>Start:</strong> {{ poll.startDate | date:'mediumDate' }}</span>
+          <span class="date-divider">|</span>
+          <span class="date-item"><strong>End:</strong> {{ poll.endDate | date:'mediumDate' }}</span>
         </div>
-
-        <!-- Title & Description -->
-        <h2 class="poll-card-title">{{ poll.title }}</h2>
-        <p class="poll-card-desc">{{ poll.description }}</p>
-
-        <!-- Prominent Voted Summary Banner -->
-        <div class="voted-summary-banner" *ngIf="poll.userVoted">
-          <span class="voted-icon">✓</span>
-          <span>You voted for: <strong>{{ poll.selectedOption || 'Your selected choice' }}</strong></span>
+      </div>
+  
+      <h4>{{ poll.title }}</h4>
+      <p class="description">{{ poll.description }}</p>
+  
+      <!-- Post-Vote Results Mode -->
+      <div class="results-container" *ngIf="poll.userVoted; else voteMode">
+        <div class="voted-banner">
+          <span>✓</span> You voted: <strong>{{ poll.selectedOption }}</strong>
         </div>
-
-        <!-- Options Mini-cards -->
-        <div class="options-minicards-list">
-          <div 
-            class="option-minicard" 
-            *ngFor="let option of poll.options"
-            [class.selected-minicard]="poll.userVoted && poll.selectedOption === option"
-            [class.voted-disabled-minicard]="poll.userVoted">
-            
-            <div class="minicard-top">
-              <span class="option-title-text">
-                {{ option }}
-                <span class="selected-tag" *ngIf="poll.userVoted && poll.selectedOption === option">✓ Selected</span>
-              </span>
-              <div class="minicard-stats">
-                <span class="option-percentage-text">{{ getOptionPercentage(poll, option) }}%</span>
-                <span class="option-vote-count">({{ getOptionVotes(poll, option) }} votes)</span>
-              </div>
-            </div>
-
-            <!-- Progress Meter -->
-            <div class="progress-bar-track">
-              <div 
-                class="progress-bar-fill" 
-                [class.selected-fill]="poll.userVoted && poll.selectedOption === option"
-                [style.width.%]="getOptionPercentage(poll, option)"></div>
-            </div>
-
-            <!-- Vote Action Button (only shown if user has NOT voted) -->
-            <div class="minicard-action-row" *ngIf="!poll.userVoted">
-              <button class="btn-vote-primary" (click)="castVote(poll, option)">
-                Vote for "{{ option }}"
-              </button>
-            </div>
+  
+        <div class="option-bar-wrapper" *ngFor="let option of poll.options">
+          <div class="option-info">
+            <span class="option-text">{{ option }}</span>
+            <span class="percentage-val">{{ getOptionPercentage(poll, option) }}%</span>
           </div>
+          <div class="bar-bg">
+            <div class="bar-fill" [style.width.%]="getOptionPercentage(poll, option)"></div>
+          </div>
+          <span class="vote-count-raw">{{ poll.results[option] || 0 | number }} votes</span>
         </div>
-
-        <!-- Bottom Footer -->
-        <div class="poll-card-footer">
-          <div class="footer-stat">
-            <span class="stat-label">👥 Total Votes</span>
-            <strong class="stat-val">{{ getTotalVotes(poll) }}</strong>
+  
+        <div class="poll-summary">
+          <span>Total votes cast: <strong>{{ getTotalVotes(poll) | number }}</strong> / {{ (poll.targetVotes || 500) | number }} target goal</span>
+        </div>
+      </div>
+  
+      <!-- Voting Mode -->
+      <ng-template #voteMode>
+        <div class="options-list">
+          <label class="option-label-radio" *ngFor="let option of poll.options">
+            <input 
+              type="radio" 
+              [name]="'poll-' + poll.id" 
+              [value]="option" 
+              [(ngModel)]="poll.selectedOption">
+            <span class="custom-radio"></span>
+            <span class="option-text">{{ option }}</span>
+          </label>
+        </div>
+  
+        <button 
+          class="vote-btn" 
+          [disabled]="poll.isVoting || !poll.selectedOption"
+          (click)="castVote(poll, poll.selectedOption || '')">
+          {{ poll.isVoting ? 'Casting Vote...' : 'Cast My Vote' }}
+        </button>
+      </ng-template>
+    </div>
+  </div>
+  
+  <ng-template #noActive>
+    <div class="empty-state">
+      <p>There are no active polls in your region at the moment.</p>
+    </div>
+  </ng-template>
+  
+  
+  <!-- CLOSED POLLS SECTION -->
+  <div class="section-title closed-section-title">
+    <h3>Closed Polls</h3>
+  </div>
+  
+  <div class="polls-grid" *ngIf="closedPolls.length > 0; else noClosed">
+    <div class="poll-card closed-card" *ngFor="let poll of closedPolls">
+      <div class="poll-top">
+        <span class="badge closed-badge">🔒 Closed</span>
+        <span class="date-range">Ended {{ poll.endDate | date:'mediumDate' }}</span>
+      </div>
+  
+      <h4>{{ poll.title }}</h4>
+      <p class="description">{{ poll.description }}</p>
+  
+      <!-- Closed Results Mode -->
+      <div class="results-container">
+        <div class="option-bar-wrapper" *ngFor="let option of poll.options">
+          <div class="option-info">
+            <span class="option-text">{{ option }}</span>
+            <span class="percentage-val">{{ getOptionPercentage(poll, option) }}%</span>
           </div>
-          <div class="footer-stat">
-            <span class="stat-label">📊 Participation</span>
-            <strong class="stat-val text-green">Community Active</strong>
+          <div class="bar-bg">
+            <div class="bar-fill gold-bar" [style.width.%]="getOptionPercentage(poll, option)"></div>
           </div>
-          <div class="footer-stat">
-            <span class="stat-label">📌 Status</span>
-            <strong class="stat-val text-green">Active</strong>
-          </div>
+          <span class="vote-count-raw">{{ poll.results[option] || 0 | number }} votes</span>
+        </div>
+  
+        <div class="poll-summary">
+          <span>Final total votes: <strong>{{ getTotalVotes(poll) | number }}</strong></span>
         </div>
       </div>
     </div>
-
-    <ng-template #noActive>
-      <div class="empty-state-saas">
-        <div class="empty-icon-circle">🗳️</div>
-        <h3>No active community polls</h3>
-        <p>There are no open municipal surveys in your district at this moment.</p>
-      </div>
-    </ng-template>
   </div>
-
-  <!-- CLOSED POLLS TAB -->
-  <div *ngIf="activeTab === 'CLOSED'">
-    <div class="polls-list-grid" *ngIf="filteredClosedPolls.length > 0; else noClosed">
-      <div class="poll-card-saas closed-poll-saas" *ngFor="let poll of filteredClosedPolls">
-        <!-- Header Row -->
-        <div class="poll-card-header">
-          <span class="status-pill closed-pill">CLOSED DECISION</span>
-          <span class="winner-summary-pill" *ngIf="getWinningOption(poll)">
-            🏆 Winner: <strong>{{ getWinningOption(poll) }}</strong>
-          </span>
-        </div>
-
-        <!-- Title & Description -->
-        <h2 class="poll-card-title">{{ poll.title }}</h2>
-        <p class="poll-card-desc">{{ poll.description }}</p>
-
-        <!-- Final Results Mini-cards -->
-        <div class="options-minicards-list">
-          <div 
-            class="option-minicard" 
-            *ngFor="let option of poll.options"
-            [class.winner-minicard]="isWinner(poll, option)">
-            
-            <div class="minicard-top">
-              <span class="option-title-text">
-                {{ option }}
-                <span class="winner-tag" *ngIf="isWinner(poll, option)">★ Winner</span>
-              </span>
-              <div class="minicard-stats">
-                <span class="option-percentage-text">{{ getOptionPercentage(poll, option) }}%</span>
-                <span class="option-vote-count">({{ getOptionVotes(poll, option) }} votes)</span>
-              </div>
-            </div>
-
-            <!-- Progress Meter -->
-            <div class="progress-bar-track">
-              <div 
-                class="progress-bar-fill" 
-                [class.winner-fill]="isWinner(poll, option)"
-                [style.width.%]="getOptionPercentage(poll, option)"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bottom Footer -->
-        <div class="poll-card-footer">
-          <div class="footer-stat">
-            <span class="stat-label">👥 Final Votes</span>
-            <strong class="stat-val">{{ getTotalVotes(poll) }}</strong>
-          </div>
-          <div class="footer-stat">
-            <span class="stat-label">📌 Status</span>
-            <strong class="stat-val text-gray">Closed Decision</strong>
-          </div>
-        </div>
-      </div>
+  
+  <ng-template #noClosed>
+    <div class="empty-state">
+      <p>No recently closed polls available.</p>
     </div>
-
-    <ng-template #noClosed>
-      <div class="empty-state-saas">
-        <div class="empty-icon-circle">📊</div>
-        <h3>No past decision archives</h3>
-        <p>Closed community decisions will appear here once finalized.</p>
-      </div>
-    </ng-template>
-  </div>
+  </ng-template>
 </ng-template>
+
+<!-- Vote Confirmation Modal Popup -->
+<div class="modal-overlay" *ngIf="showVoteSuccessModal">
+  <div class="modal-card vote-confirm-card">
+    <button class="close-modal-btn" (click)="closeVoteModal()">&times;</button>
+    
+    <div class="vote-success-icon-badge">
+      <span>✓</span>
+    </div>
+
+    <h3>Vote Recorded Successfully!</h3>
+    
+    <p class="vote-modal-subtitle">
+      Thank you for participating in civic governance. Your vote has been officially logged.
+    </p>
+
+    <div class="vote-details-box">
+      <div class="detail-row">
+        <span class="detail-label">Poll Topic:</span>
+        <span class="detail-value poll-name">{{ votedPollTitle }}</span>
+      </div>
+      <div class="detail-row choice-row">
+        <span class="detail-label">Your Choice:</span>
+        <span class="choice-badge">🗳️ {{ votedOptionName }}</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-submit" (click)="closeVoteModal()">
+        Done & View Results
+      </button>
+    </div>
+  </div>
+</div>

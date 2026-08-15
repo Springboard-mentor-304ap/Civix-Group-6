@@ -1,0 +1,116 @@
+<div class="analytics-header">
+  <div>
+    <h2>📋 Community Civic Report</h2>
+    <p>Summary of community petitions, polls, and votes.</p>
+  </div>
+</div>
+
+<!-- Loader -->
+<div class="loader-container" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading civic metrics & report...</p>
+</div>
+
+<div class="report-content" *ngIf="!loading">
+  <!-- Combined 2 Summary Cards Grid -->
+  <div class="kpi-grid-two">
+    <div class="kpi-card green-accent">
+      <div class="kpi-header">
+        <span>Community Petitions</span>
+        <span class="kpi-icon">📜</span>
+      </div>
+      <h2 class="kpi-value">{{ totalPetitions | number }} <small>petitions</small></h2>
+      <div class="kpi-sub-pill green-sub">
+        <span class="sub-icon">✍️</span>
+        <span><strong>{{ totalSignatures | number }}</strong> total signatures collected</span>
+      </div>
+    </div>
+
+    <div class="kpi-card gold-accent">
+      <div class="kpi-header">
+        <span>Municipal Polls</span>
+        <span class="kpi-icon">🗳️</span>
+      </div>
+      <h2 class="kpi-value">{{ totalPolls | number }} <small>polls</small></h2>
+      <div class="kpi-sub-pill gold-sub">
+        <span class="sub-icon">📊</span>
+        <span><strong>{{ totalVotes | number }}</strong> total votes cast</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Petition Status Pie Chart Section -->
+  <div class="chart-section-card">
+    <div class="section-title">
+      <h3>📊 Petition Status Breakdown</h3>
+      <p>Current status of all community petitions.</p>
+    </div>
+
+    <div class="pie-chart-container">
+      <!-- Conic Gradient Pie Chart -->
+      <div class="pie-chart-wrapper">
+        <div class="pie-chart" [style.background]="pieGradient">
+          <div class="pie-chart-center">
+            <span class="total-label">Total</span>
+            <span class="total-count">{{ totalPetitions }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie Chart Legend & Status Meters -->
+      <div class="pie-legend-grid">
+        <div class="legend-item">
+          <div class="legend-color-box approved"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Approved</span>
+              <span class="legend-val">{{ approvedCount }} ({{ approvedPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill approved" [style.width.%]="approvedPercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color-box under-review"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Under Review</span>
+              <span class="legend-val">{{ underReviewCount }} ({{ underReviewPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill under-review" [style.width.%]="underReviewPercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color-box resolved"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Resolved</span>
+              <span class="legend-val">{{ resolvedCount }} ({{ resolvedPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill resolved" [style.width.%]="resolvedPercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color-box rejected"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Rejected</span>
+              <span class="legend-val">{{ rejectedCount }} ({{ rejectedPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill rejected" [style.width.%]="rejectedPercent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,286 @@
+<!-- Screen Header (Screen View Only) -->
+<div class="page-header screen-only">
+  <div>
+    <h2>📝 Admin Logs</h2>
+    <p>Track community petitions, status updates, and official responses.</p>
+  </div>
+
+  <button class="export-pdf-btn" (click)="exportToPdf()">
+    <span class="icon">📄</span> Export as PDF Report
+  </button>
+</div>
+
+<!-- Loader -->
+<div class="loader-container screen-only" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading petition audit logs...</p>
+</div>
+
+<div class="alert error screen-only" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<!-- 🖥️ SCREEN VIEW: Clean Audit Table (Screen View Only) -->
+<div class="logs-container screen-only" *ngIf="!loading">
+  <div class="table-responsive-card" *ngIf="petitions.length > 0; else noPetitions">
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Title & Details</th>
+          <th>Creation Date</th>
+          <th>Category & Location</th>
+          <th>Status & Timeline</th>
+          <th>Signatures</th>
+          <th>Official Response</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of petitions">
+          <td class="title-cell">
+            <strong>{{ item.title }}</strong>
+            <p class="desc-text">{{ item.description }}</p>
+            <small class="creator-tag">Filed by: {{ item.creatorName }}</small>
+          </td>
+          <td class="date-cell">
+            <div class="date-badge">{{ item.createdAt | date:'mediumDate' }}</div>
+            <div class="time-subtext">{{ item.createdAt | date:'shortTime' }}</div>
+          </td>
+          <td class="location-cell">
+            <span class="category-tag">{{ item.category }}</span>
+            <div class="location-text">📍 {{ item.location }}</div>
+          </td>
+          <td class="status-cell">
+            <span class="status-badge" [ngClass]="item.status.toLowerCase()">
+              {{ item.status }}
+            </span>
+
+            <div class="status-timeline">
+              <div class="timeline-row">
+                <span class="timeline-dot created"></span>
+                <span class="timeline-label">Created:</span>
+                <span class="timeline-date">{{ item.createdAt | date:'shortDate' }}</span>
+              </div>
+
+              <div class="timeline-row" *ngIf="item.status !== 'ACTIVE'">
+                <span class="timeline-dot review"></span>
+                <span class="timeline-label">Under Review:</span>
+                <span class="timeline-date">{{ (item.underReviewAt || item.createdAt) | date:'shortDate' }}</span>
+              </div>
+
+              <div class="timeline-row final-step" *ngIf="item.status === 'APPROVED' || item.status === 'RESOLVED' || item.status === 'REJECTED'">
+                <span class="timeline-dot final" [ngClass]="item.status.toLowerCase()"></span>
+                <span class="timeline-label">{{ item.status === 'APPROVED' ? 'Approved:' : (item.status === 'RESOLVED' ? 'Resolved:' : 'Rejected:') }}</span>
+                <span class="timeline-date bold">{{ (item.statusUpdatedAt || item.createdAt) | date:'shortDate' }}</span>
+              </div>
+            </div>
+          </td>
+          <td class="signatures-cell">
+            <div class="sig-progress-box">
+              <span><strong>{{ item.currentSignatures | number }}</strong> / {{ item.targetSignatures | number }}</span>
+              <div class="sig-bar-bg">
+                <div class="sig-bar-fill" [style.width.%]="(item.currentSignatures / item.targetSignatures) * 100"></div>
+              </div>
+            </div>
+          </td>
+          <td class="response-cell">
+            <div class="official-response-box" *ngIf="item.officialResponse; else noResponse">
+              <small class="response-label">OFFICIAL COMMENT</small>
+              <p>{{ item.officialResponse }}</p>
+            </div>
+            <ng-template #noResponse>
+              <span class="pending-text">No officer comment added yet</span>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noPetitions>
+    <div class="empty-state">
+      <p>No petition audit logs found.</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- 📄 PDF EXPORT VIEW: Pie Chart & Report Cards (PDF Print View Only) -->
+<div class="pdf-report-container print-only">
+  <!-- Printable Official Monthly Report Letterhead Header -->
+  <div class="print-official-header">
+    <div class="header-logo-row">
+      <div class="print-seal">🏛️</div>
+      <div>
+        <h1 class="print-org-title">CIVIX MUNICIPAL GOVERNANCE PLATFORM</h1>
+        <h2 class="print-report-title">MONTHLY CIVIC ENGAGEMENT REPORT</h2>
+      </div>
+    </div>
+
+    <div class="print-meta-bar">
+      <span><strong>REPORT PERIOD:</strong> {{ currentMonthYear | uppercase }}</span>
+      <span><strong>GENERATED ON:</strong> {{ generatedAt | date:'medium' }}</span>
+    </div>
+  </div>
+
+  <!-- Executive Summary KPI Bar -->
+  <div class="print-kpi-summary">
+    <div class="print-kpi-box">
+      <span class="print-kpi-title">TOTAL PETITIONS</span>
+      <span class="print-kpi-val">{{ totalPetitionsCount }}</span>
+    </div>
+    <div class="print-kpi-box">
+      <span class="print-kpi-title">UNDER REVIEW</span>
+      <span class="print-kpi-val">{{ underReviewCount }}</span>
+    </div>
+    <div class="print-kpi-box">
+      <span class="print-kpi-title">APPROVED / RESOLVED</span>
+      <span class="print-kpi-val">{{ approvedCount }}</span>
+    </div>
+    <div class="print-kpi-box">
+      <span class="print-kpi-title">TOTAL SIGNATURES</span>
+      <span class="print-kpi-val">{{ totalSignaturesCount | number }}</span>
+    </div>
+  </div>
+
+  <!-- 📊 Petition Status Pie Chart Section in PDF -->
+  <div class="pie-chart-card">
+    <div class="pie-card-header">
+      <div>
+        <h3>📊 Petition Status Breakdown</h3>
+        <p class="pie-subtitle">Distribution of community petitions by official status.</p>
+      </div>
+    </div>
+
+    <div class="pie-card-body">
+      <div class="pie-chart-wrapper">
+        <div class="donut-chart" [style.background]="pieGradient">
+          <div class="donut-center">
+            <span class="donut-val">{{ totalPetitionsCount }}</span>
+            <span class="donut-lbl">PETITIONS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pie-legend-grid">
+        <div class="legend-item approved">
+          <span class="legend-dot approved"></span>
+          <div class="legend-text">
+            <span class="legend-label">Approved / Resolved</span>
+            <span class="legend-count"><strong>{{ approvedCount }}</strong> &nbsp;({{ approvedPct }}%)</span>
+          </div>
+        </div>
+
+        <div class="legend-item under-review">
+          <span class="legend-dot under-review"></span>
+          <div class="legend-text">
+            <span class="legend-label">Under Review</span>
+            <span class="legend-count"><strong>{{ underReviewCount }}</strong> &nbsp;({{ underReviewPct }}%)</span>
+          </div>
+        </div>
+
+        <div class="legend-item active">
+          <span class="legend-dot active"></span>
+          <div class="legend-text">
+            <span class="legend-label">Active Petitions</span>
+            <span class="legend-count"><strong>{{ activeCount }}</strong> &nbsp;({{ activePct }}%)</span>
+          </div>
+        </div>
+
+        <div class="legend-item rejected">
+          <span class="legend-dot rejected"></span>
+          <div class="legend-text">
+            <span class="legend-label">Rejected Petitions</span>
+            <span class="legend-count"><strong>{{ rejectedCount }}</strong> &nbsp;({{ rejectedPct }}%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎴 Monthly Report Petition Cards Section in PDF -->
+  <div class="report-section-header">
+    <h3>📋 Monthly Petition Report Cards</h3>
+    <p>Monthly report of community petitions, including timestamps, status transitions, and officer responses.</p>
+  </div>
+
+  <div class="petition-cards-grid">
+    <div class="petition-report-card" *ngFor="let item of petitions">
+      <div class="card-header-block">
+        <div class="title-meta-row">
+          <h4 class="card-petition-title">{{ item.title }}</h4>
+          <span class="category-badge">{{ item.category }}</span>
+        </div>
+        <p class="card-desc">{{ item.description }}</p>
+        <div class="meta-row">
+          <small class="creator-info">Filed by: <strong>{{ item.creatorName }}</strong></small>
+          <small class="location-tag">📍 {{ item.location }}</small>
+          <small class="timestamp-tag">📅 {{ item.createdAt | date:'mediumDate' }} at {{ item.createdAt | date:'shortTime' }}</small>
+        </div>
+      </div>
+
+      <div class="card-status-block">
+        <div class="status-top-row">
+          <span class="status-badge" [ngClass]="item.status.toLowerCase()">
+            {{ item.status }}
+          </span>
+
+          <div class="signature-count-inline">
+            ✍️ <strong>{{ item.currentSignatures | number }}</strong> / {{ item.targetSignatures | number }} signatures
+          </div>
+        </div>
+
+        <div class="sig-meter-bg">
+          <div class="sig-meter-fill" [style.width.%]="(item.currentSignatures / item.targetSignatures) * 100"></div>
+        </div>
+
+        <div class="card-timeline-box">
+          <div class="timeline-step">
+            <span class="timeline-dot created"></span>
+            <span class="step-lbl">Created:</span>
+            <span class="step-val">{{ item.createdAt | date:'shortDate' }}</span>
+          </div>
+
+          <div class="timeline-step" *ngIf="item.status !== 'ACTIVE'">
+            <span class="timeline-dot review"></span>
+            <span class="step-lbl">Under Review:</span>
+            <span class="step-val">{{ (item.underReviewAt || item.createdAt) | date:'shortDate' }}</span>
+          </div>
+
+          <div class="timeline-step final" *ngIf="item.status === 'APPROVED' || item.status === 'RESOLVED' || item.status === 'REJECTED'">
+            <span class="timeline-dot final" [ngClass]="item.status.toLowerCase()"></span>
+            <span class="step-lbl">{{ item.status === 'APPROVED' ? 'Approved:' : (item.status === 'RESOLVED' ? 'Resolved:' : 'Rejected:') }}</span>
+            <span class="step-val highlight">{{ (item.statusUpdatedAt || item.createdAt) | date:'shortDate' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-response-block">
+        <div class="official-response-card" *ngIf="item.officialResponse; else noResponseCard">
+          <small class="response-header">OFFICIAL OFFICER RESPONSE</small>
+          <p>{{ item.officialResponse }}</p>
+        </div>
+        <ng-template #noResponseCard>
+          <div class="pending-response-card">
+            <span>Pending official officer comment</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Official Verification Footer -->
+  <div class="print-verification-footer">
+    <div class="signature-line-row">
+      <div>
+        <span class="sig-label">Verified By (Municipal Officer):</span>
+        <div class="sig-underline"></div>
+      </div>
+      <div>
+        <span class="sig-label">Date & Signature:</span>
+        <div class="sig-underline"></div>
+      </div>
+    </div>
+    <div class="print-footer-seal">
+      🏛️ Official Municipal Administration Authority Seal & Approval
+    </div>
+  </div>
+</div>

@@ -1,0 +1,286 @@
+.analytics-header {
+  margin-bottom: 24px;
+}
+
+.analytics-header h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0d3b2e;
+}
+
+.analytics-header p {
+  color: #6b7280;
+  margin-top: 4px;
+  font-size: 15px;
+}
+
+/* Loader */
+.loader-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(13, 59, 46, 0.1);
+  border-top-color: #0d3b2e;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Combined 2 Cards Grid */
+.kpi-grid-two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.kpi-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px 28px;
+  border: 1px solid #e4dfd1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 100%;
+}
+
+.kpi-card.green-accent::before { background: #10b981; }
+.kpi-card.gold-accent::before { background: #f59e0b; }
+
+.kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.kpi-header span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-icon {
+  font-size: 24px;
+}
+
+.kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #0d3b2e;
+  margin: 0 0 14px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.kpi-value small {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* Sub-pill badges */
+.kpi-sub-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13.5px;
+  color: #374151;
+}
+
+.kpi-sub-pill.green-sub {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #065f46;
+}
+
+.kpi-sub-pill.gold-sub {
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #92400e;
+}
+
+.sub-icon {
+  font-size: 15px;
+}
+
+/* Pie Chart Section Card */
+.chart-section-card {
+  background: white;
+  border: 1px solid #e4dfd1;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.section-title {
+  margin-bottom: 24px;
+}
+
+.section-title h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0d3b2e;
+  margin: 0 0 6px 0;
+}
+
+.section-title p {
+  color: #6b7280;
+  font-size: 14.5px;
+  margin: 0;
+}
+
+/* Pie Chart Container */
+.pie-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+/* Donut Pie Chart */
+.pie-chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pie-chart {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  position: relative;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 6px 20px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.pie-chart-center {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.total-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.total-count {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0d3b2e;
+}
+
+/* Pie Chart Legend List */
+.pie-legend-grid {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.legend-color-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-color-box.approved { background: #10b981; }
+.legend-color-box.under-review { background: #f59e0b; }
+.legend-color-box.resolved { background: #2563eb; }
+.legend-color-box.rejected { background: #ef4444; }
+
+.legend-info {
+  flex: 1;
+}
+
+.legend-title-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.legend-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.legend-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.legend-bar-bg {
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.legend-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.legend-bar-fill.approved { background: #10b981; }
+.legend-bar-fill.under-review { background: #f59e0b; }
+.legend-bar-fill.resolved { background: #2563eb; }
+.legend-bar-fill.rejected { background: #ef4444; }

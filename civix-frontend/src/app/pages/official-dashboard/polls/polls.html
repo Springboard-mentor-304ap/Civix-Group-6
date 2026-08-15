@@ -30,9 +30,11 @@
         <span class="badge" [class.live]="poll.status === 'ACTIVE'" [class.closed-badge]="poll.status === 'CLOSED'">
           {{ poll.status === 'ACTIVE' ? '🗳️ Active' : '🔒 Closed' }}
         </span>
-        <span class="date-range">
-          {{ poll.startDate | date:'mediumDate' }} - {{ poll.endDate | date:'mediumDate' }}
-        </span>
+        <div class="poll-dates-highlight">
+          <span class="date-item"><strong>Start:</strong> {{ poll.startDate | date:'mediumDate' }}</span>
+          <span class="date-divider">|</span>
+          <span class="date-item"><strong>End:</strong> {{ poll.endDate | date:'mediumDate' }}</span>
+        </div>
       </div>
   
       <h4>{{ poll.title }}</h4>
@@ -58,7 +60,7 @@
         </div>
   
         <div class="poll-summary">
-          <span>Total votes: <strong>{{ getTotalVotes(poll) | number }}</strong></span>
+          <span>Total votes: <strong>{{ getTotalVotes(poll) | number }}</strong> / {{ (poll.targetVotes || 500) | number }} target goal</span>
         </div>
       </div>
   
@@ -78,12 +80,16 @@
   </ng-template>
 </ng-template>
 
-<!-- Create New Poll Modal -->
+<!-- Create Poll Modal Dialog -->
 <div class="modal-overlay" *ngIf="showCreateModal">
   <div class="modal-card">
     <div class="modal-header">
       <h3>Create New Municipal Poll</h3>
       <button class="close-modal-btn" (click)="closeModal()">&times;</button>
+    </div>
+    
+    <div class="alert error" *ngIf="errorMessage" style="margin-bottom: 1rem;">
+      {{ errorMessage }}
     </div>
     
     <form (ngSubmit)="onCreatePoll()" novalidate>
@@ -132,6 +138,17 @@
         <button type="button" class="add-opt-btn" (click)="addOptionInput()">
           ➕ Add Option Choice
         </button>
+      </div>
+
+      <div class="form-group">
+        <label for="targetVotes">Vote Target Goal</label>
+        <input 
+          id="targetVotes" 
+          type="number" 
+          [(ngModel)]="newTargetVotes" 
+          name="targetVotes" 
+          placeholder="e.g. 500 or 1000"
+          min="10">
       </div>
 
       <div class="form-row">

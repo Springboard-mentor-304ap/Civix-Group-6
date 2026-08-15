@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { catchError, of, finalize } from 'rxjs';
 
 @Component({
@@ -13,6 +14,7 @@ import { catchError, of, finalize } from 'rxjs';
 })
 export class OfficialProfileComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
 
   // Editable fields
@@ -29,14 +31,29 @@ export class OfficialProfileComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
   loading = false;
+  submitting = false;
 
   ngOnInit() {
     this.loadProfile();
   }
 
   loadProfile() {
+    const userId = localStorage.getItem('id') ?? localStorage.getItem('userId');
+    if (!userId) {
+      console.warn('Official session not found in Profile. Redirecting to login.');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    console.log('[Profile] Loading state before request:', this.loading);
+    this.loading = true;
+    this.cdr.detectChanges();
+
+    console.log('[Profile] Request sent to GET /api/auth/me');
+
     this.http.get<any>('http://localhost:8080/api/auth/me').pipe(
-      catchError(() => {
+      catchError((err) => {
+        console.error('[Profile] Error loading profile from server, using local fallback:', err);
         // Fallback local load
         this.name = localStorage.getItem('name') || 'Official Representative';
         this.email = localStorage.getItem('email') || 'official@gov.in';
@@ -49,27 +66,37 @@ export class OfficialProfileComponent implements OnInit {
       }),
       finalize(() => {
         this.loading = false;
+        console.log('[Profile] Loading state after finalize:', this.loading);
         this.cdr.detectChanges();
       })
     ).subscribe(user => {
+      console.log('[Profile] Response received:', user);
       if (user) {
-        this.name = user.name;
-        this.email = user.email;
-        this.role = user.role;
+        this.name = user.name || '';
+        this.email = user.email || '';
+        this.role = user.role || '';
         this.city = user.city || '';
         this.state = user.state || '';
         this.location = user.location || '';
         this.department = user.department || 'Municipal Administration';
 
         // Sync local storage
-        localStorage.setItem('name', user.name);
-        localStorage.setItem('email', user.email);
-        localStorage.setItem('role', user.role);
-        localStorage.setItem('city', user.city || '');
-        localStorage.setItem('state', user.state || '');
-        localStorage.setItem('location', user.location || '');
-        localStorage.setItem('department', user.department || 'Municipal Administration');
+        localStorage.setItem('name', this.name);
+        localStorage.setItem('email', this.email);
+        localStorage.setItem('role', this.role);
+        localStorage.setItem('city', this.city);
+        localStorage.setItem('state', this.state);
+        localStorage.setItem('location', this.location);
+        localStorage.setItem('department', this.department);
       }
+      this.loading = false;
+      console.log('[Profile] Profile properties populated:', {
+        name: this.name,
+        email: this.email,
+        role: this.role,
+        department: this.department
+      });
+      this.cdr.detectChanges();
     });
   }
 
@@ -82,7 +109,7 @@ export class OfficialProfileComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.submitting = true;
     const payload = {
       name: this.name.trim(),
       city: this.city.trim(),
@@ -91,8 +118,11 @@ export class OfficialProfileComponent implements OnInit {
       department: this.department.trim()
     };
 
+    console.log('Updating profile with payload:', payload);
+
     this.http.put('http://localhost:8080/api/users/profile', payload).pipe(
-      catchError(() => {
+      catchError(err => {
+        console.error('Error updating profile on server, using local fallback:', err);
         // Fallback local update
         localStorage.setItem('name', payload.name);
         localStorage.setItem('city', payload.city);
@@ -106,8 +136,7 @@ export class OfficialProfileComponent implements OnInit {
         return of(null);
       }),
       finalize(() => {
-        this.loading = false;
-        this.cdr.detectChanges();
+        this.submitting = false;
       })
     ).subscribe(res => {
       if (res !== null) {

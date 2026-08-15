@@ -105,3 +105,21 @@ input{
 .mt-2{margin-top:16px;}
 .mt-3{margin-top:24px;}
 .mt-4{margin-top:32px;}*/
+
+@media print {
+  aside, .sidebar, app-official-dashboard aside, app-citizen-dashboard aside, .dashboard-container aside, header, .nav-links, .sidebar-footer {
+    display: none !important;
+  }
+  .dashboard-container {
+    display: block !important;
+    background: white !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+}

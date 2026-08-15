@@ -1,0 +1,146 @@
+<div class="analytics-header">
+  <div>
+    <h2>📋 Official Poll Report</h2>
+    <p>Summary of municipal polls, votes cast, and goal progress.</p>
+  </div>
+</div>
+
+<!-- Loader -->
+<div class="loader-container" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading official poll analytics...</p>
+</div>
+
+<div class="report-content" *ngIf="!loading">
+  <!-- Combined 2 Summary Cards Grid -->
+  <div class="kpi-grid-two">
+    <div class="kpi-card green-accent">
+      <div class="kpi-header">
+        <span>Municipal Polls Created</span>
+        <span class="kpi-icon">🗳️</span>
+      </div>
+      <h2 class="kpi-value">{{ totalPolls | number }} <small>polls</small></h2>
+      <div class="kpi-sub-pill green-sub">
+        <span class="sub-icon">🎯</span>
+        <span><strong>{{ totalTargetGoal | number }}</strong> total target vote goal</span>
+      </div>
+    </div>
+
+    <div class="kpi-card gold-accent">
+      <div class="kpi-header">
+        <span>Total Votes Recorded</span>
+        <span class="kpi-icon">📊</span>
+      </div>
+      <h2 class="kpi-value">{{ totalVotes | number }} <small>votes</small></h2>
+      <div class="kpi-sub-pill gold-sub">
+        <span class="sub-icon">📈</span>
+        <span><strong>{{ overallCompletionPct }}%</strong> overall target reached</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Poll Status Donut Chart Section -->
+  <div class="chart-section-card">
+    <div class="section-title">
+      <h3>📊 Poll Status & Target Breakdown</h3>
+      <p>Overview of active, closed, and goal-reaching municipal voting sessions.</p>
+    </div>
+
+    <div class="pie-chart-container">
+      <!-- Conic Gradient Donut Chart -->
+      <div class="pie-chart-wrapper">
+        <div class="pie-chart" [style.background]="pieGradient">
+          <div class="pie-chart-center">
+            <span class="total-label">Total Polls</span>
+            <span class="total-count">{{ totalPolls }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Donut Chart Legend -->
+      <div class="pie-legend-grid">
+        <div class="legend-item">
+          <div class="legend-color-box active-box"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Active Polls</span>
+              <span class="legend-val">{{ activeCount }} ({{ activePercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill active-bar" [style.width.%]="activePercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color-box closed-box"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Closed / Finalized</span>
+              <span class="legend-val">{{ closedCount }} ({{ closedPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill closed-bar" [style.width.%]="closedPercent"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color-box goal-box"></div>
+          <div class="legend-info">
+            <div class="legend-title-row">
+              <span class="legend-name">Target Goal Reached</span>
+              <span class="legend-val">{{ goalReachedCount }} ({{ goalReachedPercent }}%)</span>
+            </div>
+            <div class="legend-bar-bg">
+              <div class="legend-bar-fill goal-bar" [style.width.%]="goalReachedPercent"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Poll Performance List -->
+  <div class="polls-list-section">
+    <div class="section-title">
+      <h3>🗳️ Poll Participation & Goal Progress</h3>
+      <p>Performance metrics for all drafted municipal voting sessions.</p>
+    </div>
+
+    <div class="poll-report-cards" *ngIf="pollSummaries.length > 0; else noPolls">
+      <div class="poll-summary-item" *ngFor="let item of pollSummaries">
+        <div class="poll-item-header">
+          <div>
+            <h4>{{ item.title }}</h4>
+            <span class="dates-pill">START: {{ item.startDate | date:'mediumDate' }} | END: {{ item.endDate | date:'mediumDate' }}</span>
+          </div>
+          <span class="status-badge" [class.closed]="item.status === 'CLOSED'">
+            {{ item.status }}
+          </span>
+        </div>
+
+        <div class="poll-item-body">
+          <div class="progress-info-row">
+            <span>Votes Cast: <strong>{{ item.totalVotes | number }}</strong> / {{ item.targetVotes | number }} goal</span>
+            <span class="pct-badge">{{ item.progressPct }}%</span>
+          </div>
+          <div class="meter-bar-bg">
+            <div class="meter-bar-fill" [style.width.%]="item.progressPct"></div>
+          </div>
+
+          <div class="leading-choice-box">
+            <span class="lead-label">Leading Option:</span>
+            <span class="lead-text">🏆 {{ item.leadingOption }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noPolls>
+      <div class="empty-state">
+        <p>No municipal polls found. Create a poll to start tracking voting performance.</p>
+      </div>
+    </ng-template>
+  </div>
+</div>

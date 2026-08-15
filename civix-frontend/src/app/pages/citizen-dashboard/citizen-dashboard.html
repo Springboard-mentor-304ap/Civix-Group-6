@@ -1,11 +1,11 @@
 <div class="dashboard-container">
   <!-- Sidebar / Navigation -->
   <aside class="sidebar">
-    <div class="brand">
+    <div class="brand" routerLink="/citizen-dashboard" style="cursor: pointer;">
       <div class="seal">
         <span>C</span>
       </div>
-      <div class="brand-text">
+      <div>
         <h2>CIVIX</h2>
         <small>Digital Civic Engagement</small>
       </div>
@@ -24,6 +24,9 @@
       <a routerLink="/citizen-dashboard/officials" routerLinkActive="active" class="nav-item">
         <span class="icon">🏛️</span> Officials
       </a>
+      <a routerLink="/citizen-dashboard/analytics" routerLinkActive="active" class="nav-item">
+        <span class="icon">📋</span> Report
+      </a>
       <a routerLink="/citizen-dashboard/profile" routerLinkActive="active" class="nav-item">
         <span class="icon">👤</span> Profile
       </a>
@@ -41,4 +44,3 @@
     <router-outlet></router-outlet>
   </main>
 </div>
-

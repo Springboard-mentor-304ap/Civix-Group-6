@@ -9,13 +9,15 @@ import { CitizenPetitionsComponent } from './pages/citizen-dashboard/petitions/p
 import { CitizenPollsComponent } from './pages/citizen-dashboard/polls/polls';
 import { CitizenOfficialsComponent } from './pages/citizen-dashboard/officials/officials';
 import { CitizenProfileComponent } from './pages/citizen-dashboard/profile/profile';
+import { CitizenAnalyticsComponent } from './pages/citizen-dashboard/analytics/analytics';
 import { OfficialDashboardComponent } from './pages/official-dashboard/official-dashboard';
 import { OfficialHomeComponent } from './pages/official-dashboard/home/home';
 import { OfficialPetitionsComponent } from './pages/official-dashboard/petitions/petitions';
 import { OfficialPollsComponent } from './pages/official-dashboard/polls/polls';
 import { OfficialQueriesComponent } from './pages/official-dashboard/queries/queries';
 import { OfficialProfileComponent } from './pages/official-dashboard/profile/profile';
-import { OfficialReportsComponent } from './pages/official-dashboard/reports/reports';
+import { OfficialAnalyticsComponent } from './pages/official-dashboard/analytics/analytics';
+import { OfficialAdminBlogsComponent } from './pages/official-dashboard/admin-blogs/admin-blogs';
 import { authGuard, guestGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 
@@ -34,6 +36,7 @@ export const routes: Routes = [
       { path: 'petitions', component: CitizenPetitionsComponent },
       { path: 'polls', component: CitizenPollsComponent },
       { path: 'officials', component: CitizenOfficialsComponent },
+      { path: 'analytics', component: CitizenAnalyticsComponent },
       { path: 'profile', component: CitizenProfileComponent }
     ]
   },
@@ -47,7 +50,8 @@ export const routes: Routes = [
       { path: 'petitions', component: OfficialPetitionsComponent },
       { path: 'polls', component: OfficialPollsComponent },
       { path: 'queries', component: OfficialQueriesComponent },
-      { path: 'reports', component: OfficialReportsComponent },
+      { path: 'analytics', component: OfficialAnalyticsComponent },
+      { path: 'admin-blogs', component: OfficialAdminBlogsComponent },
       { path: 'profile', component: OfficialProfileComponent }
     ]
   },

@@ -37,63 +37,88 @@
 
 /* Search Bar */
 .search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
   background: white;
-  padding: 12px 18px;
+  padding: 15px;
   border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
   border: 1px solid #e4dfd1;
-  margin-bottom: 28px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .search-bar input {
   width: 100%;
-  border: none;
+  height: 44px;
+  border: 1px solid #e4dfd1;
+  border-radius: 6px;
+  padding: 0 16px;
+  background-color: #FCFBF8;
+  font-family: inherit;
+  font-size: 15px;
   outline: none;
-  font-size: 14px;
-  color: #0d3b2e;
+  transition: all 0.2s;
+}
+
+.search-bar input:focus {
+  border-color: #16a085;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(22,160,133,0.08);
 }
 
 /* Officials Grid */
 .officials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
 
 .official-card {
   background: white;
   border: 1px solid #e4dfd1;
-  padding: 24px;
   border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.official-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(11, 61, 46, 0.06);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e4dfd1;
+  padding-bottom: 16px;
 }
 
 .avatar-official {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   background-color: #eafcf8;
+  color: #16a085;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 24px;
+  border: 1px solid rgba(22, 160, 133, 0.2);
+  flex-shrink: 0;
 }
 
 .card-header h4 {
   font-family: 'Fraunces', serif;
+  font-size: 17.5px;
+  font-weight: 600;
+  color: #0d3b2e;
+}
+
+.badge.official-badge {
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   font-weight: 600;
   background-color: #f3e8ff;
@@ -239,19 +264,39 @@
   color: #232120;
 }
 
+.form-group input {
+  border: 1px solid #e4dfd1;
+  border-radius: 6px;
+  padding: 0 16px;
+  background-color: #FCFBF8;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  height: 48px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #16a085;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(22,160,133,0.1);
+}
+
 .form-group textarea {
   border: 1px solid #e4dfd1;
   border-radius: 6px;
-  padding: 10px 12px;
+  padding: 12px 16px;
   background-color: #FCFBF8;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 14.5px;
   outline: none;
 }
 
 .form-group textarea:focus {
   border-color: #16a085;
   background-color: white;
+  box-shadow: 0 0 0 3px rgba(22,160,133,0.1);
 }
 
 .required {

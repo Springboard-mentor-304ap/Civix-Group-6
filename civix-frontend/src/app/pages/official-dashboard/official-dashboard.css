@@ -89,22 +89,25 @@
 .logout-btn {
   width: 100%;
   padding: 12px;
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.18);
+  color: #ffffff;
+  border: 1px solid rgba(239, 68, 68, 0.35);
   border-radius: 10px;
   font-weight: 600;
+  font-size: 14.5px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease;
-  border: none;
   cursor: pointer;
 }
 
 .logout-btn:hover {
-  background-color: rgba(239, 68, 68, 0.25);
-  color: #fff;
+  background-color: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-1px);
 }
 
 /* Main Content Area */
@@ -136,5 +139,20 @@
   }
   .main-content {
     padding: 20px;
+  }
+}
+
+@media print {
+  aside, .sidebar, .dashboard-container aside {
+    display: none !important;
+  }
+  .dashboard-container {
+    display: block !important;
+    background: white !important;
+    min-height: auto !important;
+  }
+  .main-content {
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }

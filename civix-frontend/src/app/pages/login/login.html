@@ -212,3 +212,24 @@
   </div>
 
 </div>
+
+<!-- Role Mismatch Error Popup Modal -->
+<div class="modal-overlay" *ngIf="showRoleErrorModal">
+  <div class="modal-card role-error-card">
+    <button class="close-modal-btn" (click)="closeRoleErrorModal()">&times;</button>
+
+    <div class="role-warning-icon-badge">
+      <span>⚠️</span>
+    </div>
+
+    <h3>Wrong Portal Selected</h3>
+
+    <p class="role-modal-message">
+      You selected <strong>{{ selectedPortalName }} Login</strong>, but your account is registered as a <strong>{{ actualRoleName }}</strong>.
+    </p>
+
+    <button type="button" class="btn-primary-action" (click)="switchToCorrectRole()">
+      Switch to {{ actualRoleName }} Login
+    </button>
+  </div>
+</div>
