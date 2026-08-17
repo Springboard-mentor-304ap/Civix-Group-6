@@ -3,7 +3,7 @@
 }
 
 .analytics-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -91,7 +91,7 @@
 }
 
 .kpi-value {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 36px;
   font-weight: 700;
   color: #0d3b2e;
@@ -150,7 +150,7 @@
 }
 
 .section-title h3 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #0d3b2e;
@@ -213,7 +213,7 @@
 }
 
 .total-count {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -315,7 +315,7 @@
 }
 
 .poll-item-header h4 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 19px;
   font-weight: 700;
   color: #0d3b2e;

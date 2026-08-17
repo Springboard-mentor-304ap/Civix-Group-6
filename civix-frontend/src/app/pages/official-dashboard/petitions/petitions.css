@@ -6,7 +6,7 @@
 }
 
 .petitions-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -135,7 +135,7 @@
 }
 
 .category-tag {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
@@ -185,7 +185,7 @@
 }
 
 .petition-card h3 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 19px;
   font-weight: 600;
   color: #0d3b2e;
@@ -329,8 +329,8 @@
   margin-top: auto;
 }
 
-.action-panel h4 {
-  font-family: 'Fraunces', serif;
+.modal-header h3 {
+  font-family: 'Noto Sans', sans-serif;
   font-size: 14.5px;
   font-weight: 600;
   color: #0d3b2e;

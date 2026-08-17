@@ -13,9 +13,9 @@
   --gray-muted: #767066;
 
   /* Fonts */
-  --font-serif: 'Fraunces', serif;
-  --font-sans: 'Public Sans', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
+  --font-serif: 'Noto Sans', -apple-system, sans-serif;
+  --font-sans: 'Noto Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
   display: block;
   width: 100%;

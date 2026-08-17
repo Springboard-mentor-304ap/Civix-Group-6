@@ -13,7 +13,7 @@
 }
 
 .page-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -128,7 +128,7 @@
 }
 
 .title-cell strong {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 15px;
   color: #0d3b2e;
   display: block;
@@ -399,7 +399,7 @@
   }
 
   .print-report-title {
-    font-family: 'Fraunces', serif !important;
+    font-family: 'Noto Sans', sans-serif !important;
     font-size: 18px !important;
     font-weight: 800 !important;
     color: #111827 !important;
@@ -449,7 +449,7 @@
   }
 
   .print-kpi-val {
-    font-family: 'Fraunces', serif !important;
+    font-family: 'Noto Sans', sans-serif !important;
     font-size: 18px !important;
     font-weight: 800 !important;
     color: #0d3b2e !important;
@@ -518,7 +518,7 @@
   }
 
   .donut-val {
-    font-family: 'Fraunces', serif !important;
+    font-family: 'Noto Sans', sans-serif !important;
     font-size: 20px !important;
     font-weight: 800 !important;
     color: #0d3b2e !important;

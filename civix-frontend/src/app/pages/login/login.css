@@ -27,7 +27,7 @@
     display:grid;
     grid-template-columns:1.05fr 480px;
     background:var(--paper);
-    font-family:'Public Sans', -apple-system, sans-serif;
+    font-family:'Noto Sans', -apple-system, sans-serif;
 }
 
 /* ===========================
@@ -97,14 +97,14 @@
     border-radius:50%;
 }
 .seal span{
-    font-family:'Fraunces', serif;
+    font-family:'Noto Sans', sans-serif;
     font-size:22px;
     font-weight:600;
     color:var(--gold-soft);
 }
 
 .brand h2{
-    font-family:'Fraunces', serif;
+    font-family:'Noto Sans', sans-serif;
     font-size:30px;
     font-weight:600;
     letter-spacing:.5px;
@@ -125,7 +125,7 @@
 }
 
 .hero h1{
-    font-family:'Fraunces', serif;
+    font-family:'Noto Sans', sans-serif;
     font-size:52px;
     line-height:1.12;
     margin-bottom:18px;
@@ -168,7 +168,7 @@ FEATURES — a civic ledger, not cards floating in space
 }
 
 .feature-mark{
-    font-family:'IBM Plex Mono', monospace;
+    font-family:'JetBrains Mono', monospace;
     font-size:12px;
     color:var(--gold-soft);
     width:28px;
@@ -234,7 +234,7 @@ RIGHT PANEL
 }
 
 .login-card .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
+    font-family:'JetBrains Mono', monospace;
     font-size:11px;
     letter-spacing:.14em;
     text-transform:uppercase;
@@ -244,7 +244,7 @@ RIGHT PANEL
 }
 
 .login-card h2{
-    font-family:'Fraunces', serif;
+    font-family:'Noto Sans', sans-serif;
     text-align:center;
     font-size:32px;
     font-weight:600;
@@ -577,7 +577,7 @@ RESPONSIVE
 }
 
 .role-error-card h3 {
-    font-family: 'Fraunces', serif;
+    font-family: 'Noto Sans', sans-serif;
     font-size: 18px;
     font-weight: 600;
     color: var(--clay);

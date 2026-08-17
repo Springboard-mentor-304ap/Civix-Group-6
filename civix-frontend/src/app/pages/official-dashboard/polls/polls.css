@@ -6,7 +6,7 @@
 }
 
 .polls-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -140,7 +140,7 @@
 }
 
 .poll-card h4 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #0d3b2e;
@@ -310,7 +310,7 @@
 }
 
 .modal-header h3 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 20px;
   font-weight: 600;
   color: #0d3b2e;

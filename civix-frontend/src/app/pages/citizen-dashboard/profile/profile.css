@@ -3,7 +3,7 @@
 }
 
 .profile-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -145,7 +145,7 @@
 }
 
 .profile-section-header h3 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 22px;
   font-weight: 700;
   color: #0d3b2e;
@@ -192,7 +192,7 @@
 }
 
 .my-petition-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 20px;
   font-weight: 700;
   color: #0d3b2e;
@@ -251,7 +251,7 @@
 }
 
 .official-response-preview .response-title {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
   font-weight: 700;
   color: #16a085;

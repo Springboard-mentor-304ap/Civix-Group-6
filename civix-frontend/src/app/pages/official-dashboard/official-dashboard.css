@@ -2,7 +2,7 @@
   display: flex;
   min-height: 100vh;
   background-color: #edf5ef;
-  font-family: 'Public Sans', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 /* Sidebar Styling */
@@ -39,14 +39,14 @@
 }
 
 .brand h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
 
 .brand small {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: #e7d5a6;
   opacity: 0.8;

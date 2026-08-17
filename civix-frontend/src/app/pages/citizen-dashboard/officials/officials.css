@@ -3,7 +3,7 @@
 }
 
 .officials-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -111,14 +111,14 @@
 }
 
 .card-header h4 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 17.5px;
   font-weight: 600;
   color: #0d3b2e;
 }
 
 .badge.official-badge {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   font-weight: 600;
   background-color: #f3e8ff;
@@ -225,7 +225,7 @@
 }
 
 .modal-header h3 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 19px;
   font-weight: 600;
   color: #0d3b2e;

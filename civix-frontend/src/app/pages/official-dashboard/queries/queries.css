@@ -3,7 +3,7 @@
 }
 
 .queries-header h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #0d3b2e;
@@ -94,7 +94,7 @@
 }
 
 .badge {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   font-weight: 600;
   padding: 2px 6px;
@@ -161,7 +161,7 @@
 }
 
 .reply-section h5 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
   color: #0d3b2e;
