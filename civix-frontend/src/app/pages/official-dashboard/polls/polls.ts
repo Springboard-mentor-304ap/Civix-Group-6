@@ -64,9 +64,9 @@ export class OfficialPollsComponent implements OnInit {
     this.loading = true;
     this.cdr.detectChanges();
 
-    console.log('[Polls] Request sent');
+    const host = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost';
 
-    this.http.get<any[]>('http://localhost:8080/api/polls').pipe(
+    this.http.get<any[]>(`http://${host}:8080/api/polls`).pipe(
       catchError((err) => {
         console.error('[Polls] Error fetching polls:', err);
         this.errorMessage = 'Failed to load polls from the server.';
@@ -126,7 +126,8 @@ export class OfficialPollsComponent implements OnInit {
 
     console.log(`Closing poll ${poll.id}...`);
 
-    this.http.patch(`http://localhost:8080/api/polls/${poll.id}/close`, {}).pipe(
+    const host = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost';
+    this.http.patch(`http://${host}:8080/api/polls/${poll.id}/close`, {}).pipe(
       catchError((err) => {
         console.error(`Error closing poll ${poll.id}:`, err);
         if (err.status === 401 || err.status === 403) {
@@ -214,7 +215,8 @@ export class OfficialPollsComponent implements OnInit {
 
     console.log('Creating poll with payload:', payload);
 
-    this.http.post<any>('http://localhost:8080/api/polls', payload).pipe(
+    const host = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost';
+    this.http.post<any>(`http://${host}:8080/api/polls`, payload).pipe(
       catchError((err) => {
         console.error('Error creating poll:', err);
         if (err.status === 401 || err.status === 403) {

@@ -52,6 +52,7 @@ export const routes: Routes = [
       { path: 'queries', component: OfficialQueriesComponent },
       { path: 'analytics', component: OfficialAnalyticsComponent },
       { path: 'admin-blogs', component: OfficialAdminBlogsComponent },
+      { path: 'admin-logs', component: OfficialAdminBlogsComponent },
       { path: 'profile', component: OfficialProfileComponent }
     ]
   },

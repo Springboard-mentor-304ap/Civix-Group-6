@@ -64,7 +64,10 @@ export class OfficialAdminBlogsComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.http.get<any[]>('http://localhost:8080/api/petitions').pipe(
+    const host = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost';
+    const apiUrl = `http://${host}:8080/api/petitions`;
+
+    this.http.get<any[]>(apiUrl).pipe(
       catchError((err) => {
         console.error('Error fetching petitions for admin logs:', err);
         this.errorMessage = 'Failed to load petition audit logs.';

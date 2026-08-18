@@ -50,7 +50,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -87,7 +87,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        .requestMatchers("/api/users/*/verify").hasRole("OFFICIAL")
+                        .requestMatchers("/api/users/*/verify").hasAnyRole("OFFICIAL", "ADMIN")
                         .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers("/api/petitions/**").authenticated()
                         .requestMatchers("/api/polls/**").authenticated()

@@ -49,10 +49,6 @@ public class PetitionController {
 
         User currentUser = resolveUser(principal);
 
-        // Locality Restriction: Officials can view petitions belonging only to their locality
-        if (currentUser != null && currentUser.getRole() == com.civix.civix_backend.entity.Role.OFFICIAL) {
-            location = currentUser.getCity();
-        }
 
         java.time.LocalDateTime startDateTime = startDate != null ? startDate.atStartOfDay() : null;
         java.time.LocalDateTime endDateTime = endDate != null ? endDate.atTime(java.time.LocalTime.MAX) : null;

@@ -69,7 +69,8 @@ export class OfficialPetitionsComponent implements OnInit {
     // Fetch ALL petitions without restricting to a single hardcoded location string
     console.log('[Official Petitions] Sending HTTP GET /api/petitions');
 
-    this.http.get<Petition[]>('http://localhost:8080/api/petitions').pipe(
+    const host = typeof window !== 'undefined' && window.location && window.location.hostname ? window.location.hostname : 'localhost';
+    this.http.get<Petition[]>(`http://${host}:8080/api/petitions`).pipe(
       catchError((error) => {
         console.error('[Official Petitions] HTTP GET /api/petitions Error:', error);
         this.errorMessage = 'Failed to load community petitions from the database.';

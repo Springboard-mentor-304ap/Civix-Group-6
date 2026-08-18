@@ -6,14 +6,14 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const userRole = localStorage.getItem('role');
   const expectedRole = route.data?.['role'];
 
-  if (userRole === expectedRole) {
+  if (userRole === expectedRole || (userRole === 'ADMIN' && expectedRole === 'OFFICIAL')) {
     return true;
   }
 
   // Mismatch fallback redirections
   if (userRole === 'CITIZEN') {
     return router.createUrlTree(['/citizen-dashboard']);
-  } else if (userRole === 'OFFICIAL') {
+  } else if (userRole === 'OFFICIAL' || userRole === 'ADMIN') {
     return router.createUrlTree(['/official-dashboard']);
   }
 

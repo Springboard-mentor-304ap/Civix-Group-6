@@ -29,9 +29,9 @@
       <div class="poll-top">
         <span class="badge live">🗳️ Live</span>
         <div class="poll-dates-highlight">
-          <span class="date-item"><strong>Start:</strong> {{ poll.startDate | date:'mediumDate' }}</span>
-          <span class="date-divider">|</span>
-          <span class="date-item"><strong>End:</strong> {{ poll.endDate | date:'mediumDate' }}</span>
+          <span class="date-item"><strong>Start:</strong> {{ (poll.startDate | date:'MMM d, y') || 'N/A' }}</span>
+          <span class="date-divider">→</span>
+          <span class="date-item"><strong>End:</strong> {{ (poll.endDate | date:'MMM d, y') || 'N/A' }}</span>
         </div>
       </div>
   
