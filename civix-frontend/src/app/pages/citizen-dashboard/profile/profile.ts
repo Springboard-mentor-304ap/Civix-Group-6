@@ -92,7 +92,7 @@ export class CitizenProfileComponent implements OnInit {
       catchError((err) => {
         console.error('[Citizen Profile] Error loading profile from server, using local fallback:', err);
         this.name = localStorage.getItem('name') || 'Citizen Member';
-        this.email = localStorage.getItem('email') || 'user@example.com';
+        this.email = localStorage.getItem('email') || 'user@civix.gov.in';
         this.role = localStorage.getItem('role') || 'CITIZEN';
         this.city = localStorage.getItem('city') || 'Delhi';
         this.state = localStorage.getItem('state') || 'Delhi';

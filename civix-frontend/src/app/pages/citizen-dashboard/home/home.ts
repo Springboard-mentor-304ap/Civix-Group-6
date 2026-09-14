@@ -17,7 +17,7 @@ export class CitizenHomeComponent implements OnInit {
   private readonly cdr = inject(ChangeDetectorRef);
 
   username = localStorage.getItem('name') || 'Citizen Member';
-  email = localStorage.getItem('email') || 'user@example.com';
+  email = localStorage.getItem('email') || 'user@civix.gov.in';
   role = localStorage.getItem('role') || 'CITIZEN';
 
   activePetitionsCount = 0;

@@ -95,7 +95,7 @@
             name="name"
             (ngModelChange)="updateErrorMessage()"
             [class.invalid]="errorMessage && errorMessage.includes('Name')"
-            placeholder="John Doe"
+            placeholder="Enter your full name"
             autocomplete="name">
         </div>
 
@@ -109,7 +109,7 @@
             name="email"
             (ngModelChange)="updateErrorMessage()"
             [class.invalid]="errorMessage && (errorMessage.includes('email') || errorMessage.includes('registered'))"
-            placeholder="you@example.com"
+            placeholder="name@domain.com"
             autocomplete="email">
         </div>
 

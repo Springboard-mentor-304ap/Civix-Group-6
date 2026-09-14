@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 export class DashboardComponent {
   
   username: string = 'Civic Member';
-  email: string = 'user@example.com';
+  email: string = 'user@civix.gov.in';
   role: string = 'CITIZEN';
 
   constructor(private router: Router) {

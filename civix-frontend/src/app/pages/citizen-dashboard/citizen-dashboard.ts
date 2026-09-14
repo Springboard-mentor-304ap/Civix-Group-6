@@ -14,7 +14,7 @@ export class CitizenDashboardComponent {
   private readonly authService = inject(AuthService);
   
   username = localStorage.getItem('name') || 'Civic Member';
-  email = localStorage.getItem('email') || 'user@example.com';
+  email = localStorage.getItem('email') || 'user@civix.gov.in';
   role = localStorage.getItem('role') || 'CITIZEN';
 
   @HostListener('window:profileUpdated')
